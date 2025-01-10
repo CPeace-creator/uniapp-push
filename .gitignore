@@ -1,0 +1,46 @@
+# 项目编译生成的文件夹
+/dist/
+/build/
+/.hbuilderx/
+# node_modules文件夹，包含项目依赖的npm包
+/node_modules/
+
+# uni-app云开发相关文件夹
+/uniCloud/.output/
+/uniCloud/.runtime/
+/uniCloud/.template/
+/uniCloud/.vscode/
+/uniCloud/.env.local
+/uniCloud/.env.development
+/uniCloud/.env.production
+
+# 本地配置文件，可能包含敏感信息
+/.env
+/.env.local
+/.env.development
+/.env.production
+
+# 编辑器和IDE生成的临时文件
+*.sublime-workspace
+*.sublime-project
+*.vscode/
+*.idea/
+*.iml
+*.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+
+# 自定义临时文件夹或文件
+/temp/
+/tmp/
+*.tmp
+
+# 其他不需要版本控制的文件
+*.bak
+*.swp
+*.swo
+*.zip
+*.tar.gz
