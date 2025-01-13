@@ -1,7 +1,7 @@
 <template>
 	<view class="editPage">
 		<uni-notice-bar show-icon text="最多可创建9个奖项,最多支持300人参与游戏抽奖"></uni-notice-bar>
-			<view class="awards">
+		<view class="awards">
 			<view class="headTitle">——奖品奖项——</view>
 			<view class="option" v-for="(item,index) in awardsList" :key="item.id">
 				<view class="top">
@@ -48,21 +48,43 @@
 					增加奖项
 				</view>
 			</view>
+		</view>
+		<view class="rule">
+			<view class="headTitle">——规则说明——</view>
+			<textarea v-model="ruleText" placeholder="请输入规则说明" />
+		</view>
+		<view class="more">
+			<view class="headTitle">——更多选项——</view>
+			<view class="content">
+				<view class="row">
+					<view class="name">
+						结束时间
+					</view>
+					<view class="control">
+						<uni-datetime-picker type="datetime" :start="deftTime.start" :end="deftTime.end" v-model="endTime"/>
+					</view>
+				</view>
+				<view class="row">
+					<view class="name">
+						是否能重复中奖
+					</view>
+					<view class="control">
+						<switch :checked="isRepeat" color="#ee4626" style="transform: scale(0.8);transform-origin: right;"
+						 @change="switchChange"/>
+					</view>
+				</view>
 			</view>
-			<view class="rule">
-				<view class="headTitle">——规则说明——</view>
-				<textarea v-model="ruleText" placeholder="请输入规则说明" />
-			</view>
-			<view class="more">
-				<view class="headTitle">——更多选项——</view>
-			</view>
+		</view>
+		<view class="submitBtn" @click="onSubmit">
+			<button type="primary">确认提交</button>
+		</view>
 	</view>
 </template>
 
 <script setup>
 import {ref} from 'vue'
 import { getUUId,getFileExtension } from '../../utils/tools';
-import { uploadFile } from '../../utils/utils';
+import { showToast, uploadFile } from '../../utils/utils';
 import dayjs from 'dayjs'
 const awardsList=ref([
 	{
@@ -118,6 +140,37 @@ const addPic=(index)=>{
 	})
 }
 
+const endTime=ref(null)
+
+//日期查询
+const deftTime=ref({
+	start:dayjs().format("YYYY-MM-DD HH:mm:ss"),
+	end:dayjs().add(7,'d').endOf("day").format("YYYY-MM-DD HH:mm:ss")
+})
+
+//检查重复
+const isRepeat=ref(false)
+
+
+//按钮切换
+const switchChange=(e)=>{
+	isRepeat.value=e.detail.value
+}
+
+const onSubmit=()=>{
+	if(!(awardsList.value.length && awardsList.value.every(item=>item.name && item.description))){
+		showToast({title:"奖项及奖品名称必填",duration:2500})
+		return;
+	}
+	if(!ruleText.value) return showToast({title:"抽奖规则必填",duration:2500})
+	let formData={
+		awardsList:awardsList.value,
+		ruleText:ruleText.value,
+		isRepeat:isRepeat.value,
+		endTime:endTime.value
+	}
+	console.log(formData);
+}
 </script>
 
 <style scoped lang="scss">
@@ -130,20 +183,20 @@ const addPic=(index)=>{
 		color: #ee4626;
 		padding-bottom: 30rpx;
 	}
+	.row{
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 34rpx;
+		border-bottom: 1rpx solid #f4f4f4;
+		height: 100rpx;
+		padding: 10rpx 0;
+	}
 	.awards{
 		.option{
 			padding: 20rpx;
 			padding-bottom: 0;
 			border-bottom: 14rpx solid #f4f4f4;
-			.row{
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				font-size: 34rpx;
-				border-bottom: 1rpx solid #f4f4f4;
-				height: 100rpx;
-				padding: 10rpx 0;
-			}
 			.top{
 				display: flex;
 				.left{
@@ -195,20 +248,37 @@ const addPic=(index)=>{
 				border-radius: 200rpx;
 			}
 		}
-		.rule{
-			padding: 20rpx;
-			margin-top: 60rpx;
-			textarea{
-				background: #fafafa;
-				border: 1px solid #efefef;
-				width: 100%;
-				padding: 10rpx 20rpx;
-				box-sizing: border-box;
-				line-height: 1.7em;
-				font-size: 36rpx;
-				min-height: 380rpx;
-				color: #333;
+	}
+	.rule{
+		padding: 20rpx;
+		margin-top: 60rpx;
+		textarea{
+			background: #fafafa;
+			border: 1px solid #efefef;
+			width: 100%;
+			padding: 10rpx 20rpx;
+			box-sizing: border-box;
+			line-height: 1.7em;
+			font-size: 36rpx;
+			min-height: 380rpx;
+			color: #333;
+		}
+	}
+	.more{
+		margin-top: 60rpx;
+		.content{
+			padding:20rpx;
+			.control{
+				width: 400rpx;
+				display: flex;
+				justify-content: flex-end;
 			}
+		}
+	}
+	.submitBtn{
+		padding: 60rpx 20rpx 100rpx;
+		button{
+			background: #ee4626;
 		}
 	}
 }

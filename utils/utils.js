@@ -75,3 +75,11 @@ export function uploadFile(count=1,callBack){
 	})
 	
 }
+
+//自定义弹窗
+export function showToast({title="",duration=1500,icon='none',mask=false}){
+	uni.showToast({
+		title:String(title),
+		duration,icon,mask
+	})
+}
