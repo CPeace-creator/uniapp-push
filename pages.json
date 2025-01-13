@@ -29,6 +29,12 @@
 					"style": {
 						"navigationBarTitleText": "创建抽奖"
 					}
+				},
+				{
+					"path": "play/play",
+					"style": {
+						"navigationBarTitleText": "抽奖启动"
+					}
 				}
 			]
 		}

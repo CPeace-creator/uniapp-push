@@ -4,7 +4,7 @@
 /.hbuilderx/
 # node_modules文件夹，包含项目依赖的npm包
 /node_modules/
-
+/unpackage/
 # uni-app云开发相关文件夹
 /uniCloud/.output/
 /uniCloud/.runtime/

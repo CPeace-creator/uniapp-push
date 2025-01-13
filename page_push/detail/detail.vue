@@ -92,7 +92,7 @@
 					<uni-icons type="gear-filled" size="30"></uni-icons>
 					<view class="text">设置编辑</view>
 				</view>
-				<view class="item" hover-class="hoverItem">
+				<view class="item" hover-class="hoverItem" @click="routeTo('/page_push/play/play')">
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">抽奖管理</view>
 				</view>
