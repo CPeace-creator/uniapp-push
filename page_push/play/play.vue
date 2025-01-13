@@ -31,7 +31,7 @@
 			</view>
 			<view class="content">
 				<uni-list>
-					<uni-list-item v-for="(item,index) in 5" :key="item"
+					<uni-list-item v-for="(item,index) in 5" :key="item" :to="`./list`"
 					clickable="true" showArrow :title="`第${index+1}轮开奖`" note="描述文字" right-text="右侧文本内容"></uni-list-item>
 				</uni-list>
 			</view>

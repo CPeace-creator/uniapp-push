@@ -33,7 +33,13 @@
 				{
 					"path": "play/play",
 					"style": {
-						"navigationBarTitleText": "抽奖启动"
+						"navigationBarTitleText": "开启抽奖"
+					}
+				},
+				{
+					"path": "play/list",
+					"style": {
+						"navigationBarTitleText": "获奖记录"
 					}
 				}
 			]
