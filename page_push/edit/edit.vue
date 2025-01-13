@@ -61,7 +61,7 @@
 <script setup>
 import {ref} from 'vue'
 import { getUUId,getFileExtension } from '../../utils/tools';
-import {dayjs} from 'dayjs'
+import dayjs from 'dayjs'
 const awardsList=ref([
 	{
 		name:'一等奖',
@@ -118,7 +118,7 @@ const addPic=(index)=>{
 				uniCloud.uploadFile({
 					filePath,
 					cloudPathAsRealPath:true,
-					cloudPath:`raffle/${dayjs().format("YYYYMMDD")}/${getUUId()}_${index}.${getFileExtension()}`,
+					cloudPath:`raffle/${dayjs(Date.now()).format("YYYYMMDD")}/${getUUId()}_${index}.${getFileExtension(filePath)}`,
 					success:res=>{
 						console.log(res);
 						uni.hideLoading()
@@ -134,6 +134,7 @@ const addPic=(index)=>{
 		}
 	})
 }
+
 </script>
 
 <style scoped lang="scss">
