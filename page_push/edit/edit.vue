@@ -7,8 +7,9 @@
 				<view class="top">
 					<view class="left" @click="addPic(index)">
 						<view class="pic">
-							<image v-if="item.picUrl" :src="item.picUrl" mode="aspectFill"></image>
-							<uni-icons v-else type="image" size="50" color="#555"></uni-icons>
+							<text v-if="item.process && item.process<100">{{item.process+"%"}}</text>
+							<image v-if="item.picUrl  && item.process==100" :src="item.picUrl" mode="aspectFill"></image>
+							<uni-icons v-if="!item.picUrl && !item.process" type="image" size="50" color="#555"></uni-icons>
 						</view>
 						<view class="text">
 							更换图片
@@ -61,6 +62,7 @@
 <script setup>
 import {ref} from 'vue'
 import { getUUId,getFileExtension } from '../../utils/tools';
+import { uploadFile } from '../../utils/utils';
 import dayjs from 'dayjs'
 const awardsList=ref([
 	{
@@ -105,33 +107,14 @@ const ruleText=ref(`1.点击参与报名参加活动;
 
 //添加图片
 const addPic=(index)=>{
-	uni.chooseImage({
-		count:1,
-		success: (res) => {
-			if(res.tempFilePaths.length>0){
-				console.log(res.tempFilePaths);
-				let filePath = res.tempFilePaths[0]
-				uni.showLoading({
-					mask:true,
-					title:"上传中"
-				})
-				uniCloud.uploadFile({
-					filePath,
-					cloudPathAsRealPath:true,
-					cloudPath:`raffle/${dayjs(Date.now()).format("YYYYMMDD")}/${getUUId()}_${index}.${getFileExtension(filePath)}`,
-					success:res=>{
-						console.log(res);
-						uni.hideLoading()
-						awardsList.value[index].picUrl =res.fileID
-					},
-					fail:error=>{
-						console.log(error);
-						uni.hideLoading();
-					}
-				})
-			}
-			console.log(res);
-		}
+	uploadFile(1,process=>{
+		console.log(process);
+		awardsList.value[index].process=process
+	}).then(res=>{
+		console.log(res);
+		awardsList.value[index].picUrl=res
+	}).catch(err=>{
+		console.log(err);
 	})
 }
 

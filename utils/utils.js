@@ -1,3 +1,5 @@
+import { getUUId,getFileExtension } from './tools';
+import dayjs from 'dayjs';
 const SYSTEM_INFO =uni.getSystemInfoSync();
 
 export const getStatusBarHeight= ()=> SYSTEM_INFO.statusBarHeight || 15;
@@ -32,4 +34,44 @@ export const routeTo=(url,type='navigate')=>{
 
 export const goBack=(back=1)=>{
 	uni.navigateBack({back})
+}
+
+//上传图片
+export function uploadFile(count=1,callBack){
+	return new Promise((reslove,reject)=>{
+		uni.chooseImage({
+			count:1,
+			success: (res) => {
+				if(res.tempFilePaths.length>0){
+					console.log(res.tempFilePaths);
+					let filePath = res.tempFilePaths[0]
+					uni.showLoading({
+						mask:true,
+						title:"上传中"
+					})
+					let index=0;
+					uniCloud.uploadFile({
+						filePath,
+						cloudPathAsRealPath:true,
+						cloudPath:`raffle/${dayjs(Date.now()).format("YYYYMMDD")}/${getUUId()}.${getFileExtension(filePath)}`,
+						success:res=>{
+							reslove(res.fileID)
+							uni.hideLoading()
+						},
+						fail:error=>{
+							reject(error);
+							uni.hideLoading();
+						},
+						onUploadProgress:event=> {
+							let percent =  Math.round(
+							(event.loaded*100)/event.total);
+							callBack(percent)
+						}
+					})
+				}
+				console.log(res);
+			}
+		})
+	})
+	
 }
