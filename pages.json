@@ -43,6 +43,12 @@
 					}
 				},
 				{
+					"path": "play/confirm",
+					"style": {
+						"navigationBarTitleText": "扫码核销"
+					}
+				},
+				{
 					"path": "awardsLog/awardsLog",
 					"style": {
 						"navigationBarTitleText": "中奖纪录"

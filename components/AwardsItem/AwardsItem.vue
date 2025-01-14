@@ -31,6 +31,9 @@
 				</view>
 			</view>
 		</view>
+		<view class="confirm" v-if="confirm">
+			<button type="primary">确认核销</button>
+		</view>
 	</view>
 </template>
 
@@ -43,7 +46,11 @@ defineProps({
 	code:{
 		type:Boolean,
 		default:false
-	}
+	},
+	confirm:{
+		type:Boolean,
+		default:false
+	},
 })
  const onWriteOff=()=>{
 	 
@@ -104,6 +111,10 @@ defineProps({
 				}
 			}
 		}
+	}
+	.confirm{
+		padding: 20rpx;
+		padding-top: 60rpx;
 	}
 }
 </style>

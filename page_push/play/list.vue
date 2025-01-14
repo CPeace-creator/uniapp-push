@@ -1,6 +1,6 @@
 <template>
 	<view playList>
-		<z-paging ref="paging" v-model="dataList" @query="queryList" :default-page-size="15">
+		<z-paging ref="paging" v-model="dataList" @query="queryList" :default-page-size="15" empty-view-text="暂无获奖记录">
 			<template #loading><uni-load-more status="loading"></uni-load-more></template>
 			<view class="list">
 				<view class="row" v-for="(item,index) in dataList" :key="index">
