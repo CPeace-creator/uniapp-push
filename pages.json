@@ -41,6 +41,12 @@
 					"style": {
 						"navigationBarTitleText": "获奖记录"
 					}
+				},
+				{
+					"path": "awardsLog/awardsLog",
+					"style": {
+						"navigationBarTitleText": "中奖纪录"
+					}
 				}
 			]
 		}

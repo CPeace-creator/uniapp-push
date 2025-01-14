@@ -80,7 +80,7 @@
 		</view>
 		<view class="menuBar">
 			<view class="group" :style="{opacity:menuState?1:0,transform:menuState?'scaleY(1)':'scaleY(0)'}">
-				<view class="item" hover-class="hoverItem">
+				<view class="item" hover-class="hoverItem" @click="routeTo('/page_push/awardsLog/awardsLog')">
 					<uni-icons type="gift-filled" size="30"></uni-icons>
 					<view class="text">中奖纪录</view>
 				</view>

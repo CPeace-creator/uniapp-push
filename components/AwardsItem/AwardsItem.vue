@@ -4,7 +4,7 @@
 			<image  class="pic" src="../../static/logo.jpg" mode="aspectFill"></image>
 			<view class="text">
 				湘江中路
-			</view>
+			</view>	
 		</view>
 		<view class="body">
 			<view class="left">
@@ -25,7 +25,8 @@
 						时间:2025-01-13 12:00:00
 					</view>
 					<view class="line">
-						<button type="primary" size="mini">手动核销</button>
+						<button type="primary" size="mini" v-if="writeOff" @click="onWriteOff">手动核销</button>
+						<button type="primary" size="mini" v-if="code" @click="onCode">兑换码</button>
 					</view>
 				</view>
 			</view>
@@ -34,7 +35,22 @@
 </template>
 
 <script setup>
- 
+defineProps({
+	writeOff:{
+		type:Boolean,
+		default:false
+	},
+	code:{
+		type:Boolean,
+		default:false
+	}
+})
+ const onWriteOff=()=>{
+	 
+ }
+ const onCode=()=>{
+	 
+ }
 </script>
 
 <style lang="scss" scoped>
