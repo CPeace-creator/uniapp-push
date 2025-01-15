@@ -32,6 +32,10 @@
 	const queryList = async (pageNo, pageSize) => {
 		const pushData = new DBUtils("push-data");
 		let res = await pushData.query({
+			mainTable: "push-data",
+			secondTable: "uni-id-users",
+			secondField: "_id,nickname",
+			tempField: "active_state,create_date,join_count,arrayElemAt(user_id,nickname,0) as nickname,_id",
 			orderBy: "create_time desc"
 		})
 		if (res.errCode == 0) {

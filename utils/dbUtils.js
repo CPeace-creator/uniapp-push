@@ -17,32 +17,59 @@ export default class DBUtils {
 	}
 
 
-	async query({
-		query = "",
-		where = "",
-		orderBy = "",
-		options = ""
-	}) {
+	async query(data) {
+		const {
+			query,
+			where,
+			orderBy,
+			options,
+			mainTable,
+			secondTable,
+			primaryField,
+			secondaryField,
+			queryConditions,
+			mainField,
+			secondField,
+			tempField
+		} = data
+		console.log(data)
 		try {
-			let collectionQuery = this.db.collection(this.tableName);
+			let mainQuery = this.db.collection(this.tableName);
+			let secondQuery;
+			if (mainTable != "" && secondTable != "") {
+				mainQuery = this.db.collection(mainTable).getTemp()
+				secondQuery = this.db.collection(secondTable).getTemp()
+			}
+			if (mainField != "") {
+				mainQuery = mainQuery.field(mainField)
 
+			}
+			if (secondField != "") {
+				secondQuery = secondQuery.field(secondField)
+			}
 			if (query !== "") {
-				collectionQuery = collectionQuery.where(query);
+				mainQuery = mainQuery.where(query);
 			}
 
 			if (orderBy !== "") {
-				collectionQuery = collectionQuery.orderBy(orderBy);
+				mainQuery = mainQuery.orderBy(orderBy);
 			}
 
 			if (options !== "") {
-				collectionQuery = collectionQuery.get(options);
+				mainQuery = mainQuery.get(options);
 			} else {
-
-				collectionQuery = collectionQuery.get();
+				mainQuery = mainQuery.get();
 			}
-
-			const res = await collectionQuery;
-			return res.result;
+			if (mainTable != "" && secondTable != "") {
+				let res = await db.collection(mainQuery, secondQuery)
+				if (tempField != "") {
+					res = res.field(tempField)
+				}
+				return res.result
+			} else {
+				const res = await mainQuery;
+				return res.result;
+			}
 		} catch (e) {
 			console.error('查询数据失败：', e);
 			throw e;
