@@ -53,6 +53,13 @@ export function uploadFile(count = 1, callBack) {
 				if (res.tempFilePaths.length > 0) {
 					console.log(res.tempFilePaths);
 					let filePath = res.tempFilePaths[0]
+					let suffixName = ""
+					// #ifdef MP
+					suffixName = getFileExtension(filePath)
+					// #endif
+					// #ifdef H5
+					suffixName = getFileExtension(res.tempFiles[0].name)
+					// #endif
 					uni.showLoading({
 						mask: true,
 						title: "上传中"
@@ -61,7 +68,7 @@ export function uploadFile(count = 1, callBack) {
 					uniCloud.uploadFile({
 						filePath,
 						cloudPathAsRealPath: true,
-						cloudPath: `raffle/${dayjs(Date.now()).format("YYYYMMDD")}/${getUUId()}.${getFileExtension(filePath)}`,
+						cloudPath: `raffle/${dayjs(Date.now()).format("YYYYMMDD")}/${getUUId()}.${suffixName}`,
 						success: res => {
 							reslove(res.fileID)
 							uni.hideLoading()
