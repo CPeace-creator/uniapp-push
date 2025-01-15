@@ -8,8 +8,10 @@
 					<view class="left" @click="addPic(index)">
 						<view class="pic">
 							<text v-if="item.process && item.process<100">{{item.process+"%"}}</text>
-							<image v-if="item.picUrl  && item.process==100" :src="item.picUrl" mode="aspectFill"></image>
-							<uni-icons v-if="!item.picUrl && !item.process" type="image" size="50" color="#555"></uni-icons>
+							<image v-if="item.picUrl  && item.process==100" :src="item.picUrl" mode="aspectFill">
+							</image>
+							<uni-icons v-if="!item.picUrl && !item.process" type="image" size="50"
+								color="#555"></uni-icons>
 						</view>
 						<view class="text">
 							更换图片
@@ -18,7 +20,7 @@
 					<view class="right">
 						<view class="row">
 							<view class="name">
-								<input type="text" v-model="item.name"  placeholder="请输入奖项名称" />
+								<input type="text" v-model="item.name" placeholder="请输入奖项名称" />
 							</view>
 							<view class="remove" @click="removeAwards(index)">
 								<uni-icons type="minus-filled" size="30" color="#ee4626" v-if="true"></uni-icons>
@@ -29,7 +31,7 @@
 								<input type="text" placeholder="请输入奖品名称" v-model="item.description" />
 							</view>
 							<view>
-								
+
 							</view>
 						</view>
 					</view>
@@ -43,7 +45,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="addBox">
+			<view class="addBox" v-if="awardsList.length<9">
 				<view class="btn" @click="addAwards">
 					增加奖项
 				</view>
@@ -61,7 +63,8 @@
 						结束时间
 					</view>
 					<view class="control">
-						<uni-datetime-picker type="datetime" :start="deftTime.start" :end="deftTime.end" v-model="endTime"/>
+						<uni-datetime-picker type="datetime" :start="deftTime.start" :end="deftTime.end"
+							v-model="endTime" />
 					</view>
 				</view>
 				<view class="row">
@@ -69,8 +72,8 @@
 						是否能重复中奖
 					</view>
 					<view class="control">
-						<switch :checked="isRepeat" color="#ee4626" style="transform: scale(0.8);transform-origin: right;"
-						 @change="switchChange"/>
+						<switch :checked="isRepeat" color="#ee4626"
+							style="transform: scale(0.8);transform-origin: right;" @change="switchChange" />
 					</view>
 				</view>
 			</view>
@@ -82,204 +85,259 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import { getUUId,getFileExtension } from '../../utils/tools';
-import { showToast, uploadFile } from '../../utils/utils';
-import dayjs from 'dayjs'
-const awardsList=ref([
-	{
-		name:'一等奖',
-		description:'',
-		picUrl:'',
-		number:1,
-		id:getUUId()
-	},
-	{
-		name:'二等奖',
-		description:'',
-		picUrl:'',
-		number:2,
-		id:getUUId()
-	},
-])
-const addAwards=()=>{
-	awardsList.value.push({
-		name:'',
-		description:'',
-		picUrl:'',
-		number:1,
-		id:getUUId()
-	})
-}
-
-const removeAwards=async(index)=>{
-	let res= await uni.showModal({
-		title:'是否删除奖项'	
-	})
-	if(res.confirm){
-		awardsList.value.splice(index,1)
+	import {
+		ref
+	} from 'vue'
+	import {
+		getUUId,
+		getFileExtension
+	} from '../../utils/tools';
+	import {
+		showToast,
+		goBack,
+		uploadFile
+	} from '../../utils/utils';
+	import dayjs from 'dayjs'
+	import DBUtils from '../../utils/dbUtils';
+	const awardsList = ref([{
+			name: '一等奖',
+			description: '',
+			picUrl: '',
+			number: 1,
+			id: getUUId()
+		},
+		{
+			name: '二等奖',
+			description: '',
+			picUrl: '',
+			number: 2,
+			id: getUUId()
+		},
+	])
+	const addAwards = () => {
+		awardsList.value.push({
+			name: '',
+			description: '',
+			picUrl: '',
+			number: 1,
+			id: getUUId()
+		})
 	}
-}
 
-//规则说明
-const ruleText=ref(`1.点击参与报名参加活动;
+	const removeAwards = async (index) => {
+		let res = await uni.showModal({
+			title: '是否删除奖项'
+		})
+		if (res.confirm) {
+			awardsList.value.splice(index, 1)
+		}
+	}
+
+	//规则说明
+	const ruleText = ref(`1.点击参与报名参加活动;
 2.参与后无需额外操作,等待主办方发起抽奖;
 3.抽奖成功后会将抽奖结果返回,可在右上角点击查看;
 4.将获奖记录给现成工作人员核销后,领取对应的奖品`)
 
-//添加图片
-const addPic=(index)=>{
-	uploadFile(1,process=>{
-		console.log(process);
-		awardsList.value[index].process=process
-	}).then(res=>{
-		console.log(res);
-		awardsList.value[index].picUrl=res
-	}).catch(err=>{
-		console.log(err);
+	//添加图片
+	const addPic = (index) => {
+		uploadFile(1, process => {
+			console.log(process);
+			awardsList.value[index].process = process
+		}).then(res => {
+			console.log(res);
+			awardsList.value[index].picUrl = res
+		}).catch(err => {
+			console.log(err);
+		})
+	}
+
+	const endTime = ref(null)
+
+	//日期查询
+	const deftTime = ref({
+		start: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+		end: dayjs().add(7, 'd').endOf("day").format("YYYY-MM-DD HH:mm:ss")
 	})
-}
 
-const endTime=ref(null)
-
-//日期查询
-const deftTime=ref({
-	start:dayjs().format("YYYY-MM-DD HH:mm:ss"),
-	end:dayjs().add(7,'d').endOf("day").format("YYYY-MM-DD HH:mm:ss")
-})
-
-//检查重复
-const isRepeat=ref(false)
+	//检查重复
+	const isRepeat = ref(false)
 
 
-//按钮切换
-const switchChange=(e)=>{
-	isRepeat.value=e.detail.value
-}
-
-const onSubmit=()=>{
-	if(!(awardsList.value.length && awardsList.value.every(item=>item.name && item.description))){
-		showToast({title:"奖项及奖品名称必填",duration:2500})
-		return;
+	//按钮切换
+	const switchChange = (e) => {
+		isRepeat.value = e.detail.value
 	}
-	if(!ruleText.value) return showToast({title:"抽奖规则必填",duration:2500})
-	let formData={
-		awardsList:awardsList.value,
-		ruleText:ruleText.value,
-		isRepeat:isRepeat.value,
-		endTime:endTime.value
+
+	const onSubmit = async () => {
+		const pushData = new DBUtils("push-data")
+		if (!(awardsList.value.length && awardsList.value.every(item => item.name && item.description))) {
+			showToast({
+				title: "奖项及奖品名称必填",
+				duration: 2500
+			})
+			return;
+		}
+		if (!ruleText.value) return showToast({
+			title: "抽奖规则必填",
+			duration: 2500
+		})
+		let formData = {
+			awardsList: awardsList.value,
+			ruleText: ruleText.value,
+			isRepeat: isRepeat.value,
+			endTime: endTime.value
+		}
+		uni.showLoading({
+			title: "创建奖项中请稍后",
+			mask: true
+		})
+		const {
+			result: {
+				errCode
+			}
+		} = await pushData.add(formData);
+		if (errCode == 0) {
+			setTimeout(() => {
+				showToast({
+					title: "创建奖项成功"
+				})
+				goBack()
+			}, 1000)
+		} else {
+			showToast({
+				title: "创建奖项失败,请重新尝试",
+				icon: "error"
+			})
+		}
 	}
-	console.log(formData);
-}
 </script>
 
 <style scoped lang="scss">
-.editPage{
-	.headTitle{
-		font-size: 34rpx;
-		line-height: 2rem;
-		font-weight: bolder;
-		text-align: center;
-		color: #ee4626;
-		padding-bottom: 30rpx;
-	}
-	.row{
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		font-size: 34rpx;
-		border-bottom: 1rpx solid #f4f4f4;
-		height: 100rpx;
-		padding: 10rpx 0;
-	}
-	.awards{
-		.option{
-			padding: 20rpx;
-			padding-bottom: 0;
-			border-bottom: 14rpx solid #f4f4f4;
-			.top{
-				display: flex;
-				.left{
-					width: 160rpx;
+	.editPage {
+		.headTitle {
+			font-size: 34rpx;
+			line-height: 2rem;
+			font-weight: bolder;
+			text-align: center;
+			color: #ee4626;
+			padding-bottom: 30rpx;
+		}
+
+		.row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 34rpx;
+			border-bottom: 1rpx solid #f4f4f4;
+			height: 100rpx;
+			padding: 10rpx 0;
+		}
+
+		.awards {
+			.option {
+				padding: 20rpx;
+				padding-bottom: 0;
+				border-bottom: 14rpx solid #f4f4f4;
+
+				.top {
 					display: flex;
-					align-items: center;
-					justify-content: center;
-					flex-direction: column;
-					.pic{
-						width: 120rpx;
-						height: 120rpx;
-						background: #f4f4f4;
+
+					.left {
+						width: 160rpx;
 						display: flex;
 						align-items: center;
 						justify-content: center;
-						image{
-							width: 100%;
-							height: 100%;
+						flex-direction: column;
+
+						.pic {
+							width: 120rpx;
+							height: 120rpx;
+							background: #f4f4f4;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+
+							image {
+								width: 100%;
+								height: 100%;
+							}
+						}
+
+						.text {
+							font-size: 28rpx;
+							color: #999;
+							line-height: 2em;
 						}
 					}
-					.text{
-						font-size: 28rpx;
-						color:#999;
-						line-height: 2em;
-					}
-				}
-				.right{
-					flex: 1;
-					.row{
-						.name{
-							font-size: 38rpx;
-							font-weight: bolder;
+
+					.right {
+						flex: 1;
+
+						.row {
+							.name {
+								font-size: 38rpx;
+								font-weight: bolder;
+							}
 						}
 					}
 				}
 			}
-		}
-		.addBox{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding:60rpx 0;
-			background: #f4f4f4;
-			.btn{
-				border: 1px solid #ee4626;
-				padding: 15rpx 35rpx;
-				color: #ee4626;
-				font-size: 36rpx;
-				border-radius: 200rpx;
-			}
-		}
-	}
-	.rule{
-		padding: 20rpx;
-		margin-top: 60rpx;
-		textarea{
-			background: #fafafa;
-			border: 1px solid #efefef;
-			width: 100%;
-			padding: 10rpx 20rpx;
-			box-sizing: border-box;
-			line-height: 1.7em;
-			font-size: 36rpx;
-			min-height: 380rpx;
-			color: #333;
-		}
-	}
-	.more{
-		margin-top: 60rpx;
-		.content{
-			padding:20rpx;
-			.control{
-				width: 400rpx;
+
+			.addBox {
 				display: flex;
-				justify-content: flex-end;
+				align-items: center;
+				justify-content: center;
+				padding: 60rpx 0;
+				background: #f4f4f4;
+
+				.btn {
+					border: 1px solid #ee4626;
+					padding: 15rpx 35rpx;
+					color: #ee4626;
+					font-size: 36rpx;
+					border-radius: 200rpx;
+				}
+			}
+		}
+
+		.rule {
+			padding: 20rpx;
+			margin-top: 60rpx;
+
+			textarea {
+				background: #fafafa;
+				border: 1px solid #efefef;
+				width: 100%;
+				padding: 10rpx 20rpx;
+				box-sizing: border-box;
+				line-height: 1.7em;
+				font-size: 36rpx;
+				min-height: 380rpx;
+				color: #333;
+			}
+		}
+
+		.more {
+			margin-top: 60rpx;
+
+			.content {
+				padding: 20rpx;
+
+				.control {
+					width: 400rpx;
+					display: flex;
+					justify-content: flex-end;
+				}
+			}
+		}
+
+		.submitBtn {
+			padding: 60rpx 20rpx 100rpx;
+
+			button {
+				background: #ee4626;
 			}
 		}
 	}
-	.submitBtn{
-		padding: 60rpx 20rpx 100rpx;
-		button{
-			background: #ee4626;
-		}
-	}
-}
 </style>
