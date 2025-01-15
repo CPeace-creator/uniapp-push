@@ -1,52 +1,29 @@
 <template>
 	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text class="title">{{title}}</text>
-		</view>
+		<image src="../../static/raffle-pic.jpg" mode="" @click="routeTo('/page_push/list/list')"></image>
+		<text>点击图片可参与活动</text>
 	</view>
 </template>
 
-<script>
-	export default {
-		data() {
-			return {
-				title: 'Hello'
-			}
-		},
-		onLoad() {
-
-		},
-		methods: {
-
-		}
-	}
+<script setup>
+	import {
+		routeTo
+	} from '../../utils/utils.js'
 </script>
 
-<style>
+<style scoped lang="scss">
 	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
+		width: 800rpx;
+		height: 1100rpx;
 
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
+		image {
+			width: 100%;
+			height: 100%;
+		}
 
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
+		text {
+			font-size: 38rpx;
+			font-weight: bolder;
+		}
 	}
 </style>
