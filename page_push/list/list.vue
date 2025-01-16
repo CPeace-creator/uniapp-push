@@ -5,7 +5,8 @@
 				<uni-load-more status="loading"></uni-load-more>
 			</template>
 			<uni-list border-full>
-				<uni-list-item title="列表文字" clickable note="列表描述信息" showArrow rightText="右侧文字"
+				<uni-list-item :title="`${item.nickname}--创建抽奖活动`" clickable note="列表描述信息" showArrow
+					:rightText="getActiveState(item.active_state)"
 					:note="`创建于${dayjs(item.create_time).format('YYYY-MM-DD HH:mm:ss')}\n已参与${item.join_count}人`"
 					v-for="item in dataList" :key="item" @click="routeTo('/page_push/detail/detail')"></uni-list-item>
 			</uni-list>
@@ -18,7 +19,8 @@
 
 <script setup>
 	import {
-		routeTo
+		routeTo,
+		getActiveState
 	} from '../../utils/utils';
 	import {
 		ref
@@ -32,10 +34,9 @@
 	const queryList = async (pageNo, pageSize) => {
 		const pushData = new DBUtils("push-data");
 		let res = await pushData.query({
-			mainTable: "push-data",
 			secondTable: "uni-id-users",
 			secondField: "_id,nickname",
-			tempField: "active_state,create_date,join_count,arrayElemAt(user_id,nickname,0) as nickname,_id",
+			tempField: "active_state,create_date,join_count,arrayElemAt(user_id.nickname,0) as nickname,_id",
 			orderBy: "create_time desc"
 		})
 		if (res.errCode == 0) {

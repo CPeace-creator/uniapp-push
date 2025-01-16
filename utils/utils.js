@@ -105,3 +105,18 @@ export function showToast({
 		mask
 	})
 }
+
+export const getActiveState = (active) => {
+	switch (active) {
+		case 1:
+			return "未开始";
+			break;
+
+		case 2:
+			return "进行中";
+			break;
+		case 3:
+			return "已结束";
+			break;
+	}
+}

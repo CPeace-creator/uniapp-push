@@ -17,28 +17,37 @@ export default class DBUtils {
 	}
 
 
-	async query(data) {
-		const {
-			query,
+	async query({
+		query = "",
+		where = "",
+		orderBy = "",
+		options = "",
+		mainTable = "",
+		secondTable = "",
+		primaryField = "",
+		secondaryField = "",
+		queryConditions = "",
+		mainField = "",
+		secondField = "",
+		tempField = ""
+	}) {
+		console.log(query,
 			where,
 			orderBy,
 			options,
-			mainTable,
 			secondTable,
 			primaryField,
 			secondaryField,
 			queryConditions,
 			mainField,
 			secondField,
-			tempField
-		} = data
-		console.log(data)
+			tempField);
 		try {
-			let mainQuery = this.db.collection(this.tableName);
+			let queryDB = uniCloud.databaseForJQL();
+			let mainQuery = queryDB.collection(this.tableName);
 			let secondQuery;
-			if (mainTable != "" && secondTable != "") {
-				mainQuery = this.db.collection(mainTable).getTemp()
-				secondQuery = this.db.collection(secondTable).getTemp()
+			if (secondTable != "") {
+				secondQuery = queryDB.collection(secondTable);
 			}
 			if (mainField != "") {
 				mainQuery = mainQuery.field(mainField)
@@ -57,17 +66,19 @@ export default class DBUtils {
 
 			if (options !== "") {
 				mainQuery = mainQuery.get(options);
-			} else {
-				mainQuery = mainQuery.get();
 			}
-			if (mainTable != "" && secondTable != "") {
-				let res = await db.collection(mainQuery, secondQuery)
+			if (secondTable != "") {
+
+				mainQuery = mainQuery.getTemp()
+				secondQuery = secondQuery.getTemp()
+				let res = await queryDB.collection(mainQuery, secondQuery)
 				if (tempField != "") {
 					res = res.field(tempField)
 				}
-				return res.result
+				console.log(res);
+				return res.get()
 			} else {
-				const res = await mainQuery;
+				const res = await mainQuery.get();
 				return res.result;
 			}
 		} catch (e) {
