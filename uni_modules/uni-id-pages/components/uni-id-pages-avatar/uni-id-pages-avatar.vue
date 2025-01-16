@@ -12,6 +12,8 @@
 		store,
 		mutations
 	} from '@/uni_modules/uni-id-pages/common/store.js'
+	import { getUUId } from '../../../../utils/tools'
+	import dayjs from 'dayjs'
 	/**
 	 * uni-id-pages-avatar 
 	 * @description 用户头像组件

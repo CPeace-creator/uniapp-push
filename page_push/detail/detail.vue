@@ -12,7 +12,7 @@
 				</view>
 				<view class="userInfo" @click="handleUserInfo">
 					<view class="avatar">
-						<image src="../../static/defAvatar.jpg" mode="aspectFill"></image>
+						<image :src="store.hasLogin?store.userInfo.avatar_file.url+'x-oss-process=iamge/resize,w_120,m_lfit':'../../static/defAvatar.jpg'" mode="aspectFill"></image>
 					</view>
 					<view class="name">{{store.hasLogin?store.userInfo.nickname:"点击登录"}}</view>
 				</view>
