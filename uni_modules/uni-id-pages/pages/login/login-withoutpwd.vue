@@ -2,13 +2,13 @@
 <template>
 	<view class="uni-content">
 		<view class="login-logo">
-			<image :src="logo"></image>
+			<image :src="logo" mode="aspectFill"></image>
 		</view>
 		<!-- 顶部文字 -->
-		<text class="title">请选择登录方式</text>
+		<!-- <text class="title">请选择登录方式</text> -->
 		<!-- 快捷登录框 当url带参数时有效 -->
 		<template v-if="['apple','weixin', 'weixinMobile', 'huawei', 'huaweiMobile'].includes(type)">
-			<text class="tip">将根据第三方账号服务平台的授权范围获取你的信息</text>
+			<!-- <text class="tip">将根据第三方账号服务平台的授权范围获取你的信息</text> -->
 			<view class="quickLogin">
 				<image v-if="type !== 'weixinMobile' && type !== 'huaweiMobile'" @click="quickLogin" :src="imgSrc"
 					mode="widthFix" class="quickLoginBtn"></image>
@@ -51,7 +51,7 @@
 				type: "", //快捷登录方式
 				phone: "", //手机号码
 				focusPhone: false,
-				logo: "/static/logo.png"
+				logo:"../../../../static/logo.jpg"
 			}
 		},
 		computed: {
@@ -193,6 +193,18 @@
 </script>
 
 <style lang="scss" scoped>
+	.login-logo{
+		display: block;
+		width: 200rpx;
+		height: 200rpx;
+		margin:50rpx auto;
+		border-radius: 50%;
+		overflow: hidden;
+		image{
+			width: 100%;
+			height: 100%;
+		}
+	}
 	@import "@/uni_modules/uni-id-pages/common/login-page.scss";
 
 	@media screen and (min-width: 690px) {
