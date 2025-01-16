@@ -46,9 +46,9 @@
 			<view class="item">
 				<view class="title">——奖品奖项——</view>
 				<view class="content">
-					<view class="row" v-for="item in detial.awardsList" :key="item.id">
-						<view class="pic" @click="clickAwardPic">
-							<image :src="item.picUrl?item.picUrl:'../../static/prizePic.webp'" mode="aspectFill">
+					<view class="row" v-for="(item,index) in detial.awardsList" :key="item.id">
+						<view class="pic" @click="clickAwardPic(index)">
+							<image :src="item.picUrl" mode="aspectFill">
 							</image>
 						</view>
 						<view class="text">
@@ -149,9 +149,11 @@
 	const menuState = ref(true)
 	const pageRoute = ref(getCurrentPages())
 	const resultPopup = ref(null)
-	const clickAwardPic = () => {
+	const clickAwardPic = (index) => {
+		let urls = detial.value.awardsList.map(item => item.picUrl.split("?")[0])
 		uni.previewImage({
-			urls: ['https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/raffle-repeat.jpg']
+			urls,
+			current: index
 		})
 	}
 	onLoad((e) => {
@@ -174,6 +176,14 @@
 		let res = await pushData.query({
 			query: `_id=="${id}"`,
 			orderBy: "create_date desc"
+		})
+		res.data[0].awardsList = res.data[0].awardsList.map(item => {
+			//?x-oss-process=iamge/resize,w_120,m_lfit使用阿里云图片压缩
+			return {
+				...item,
+				picUrl: item.picUrl ? item.picUrl + "?x-oss-process=iamge/resize,w_120,m_lfit" :
+					"https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/prizePic.webp"
+			}
 		})
 		if (res.errCode == 0) {
 			detial.value = res.data[0]
