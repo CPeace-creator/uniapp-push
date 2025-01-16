@@ -18,22 +18,26 @@
 				</view>
 			</view>
 			<view class="statusGroup" @click="openPopoup">
-				<view class="add btn" v-if="true">
-					<text>点击\n参与</text>
-				</view>
-				<view class="nostart btn" v-if="false">
-					未开始
-				</view>
-				<view class="start btn" v-if="false">
-					进行中
-				</view>
-				<view class="end btn" v-if="false">
-					已结束
-				</view>
+				<template v-if="true">
+					<view class="add btn">
+						<text>点击\n参与</text>
+					</view>
+				</template>
+				<template v-else>
+					<view class="nostart btn" v-if="detial.active_state==1">
+						未开始
+					</view>
+					<view class="start btn" v-if="detial.active_state==2">
+						进行中
+					</view>
+					<view class="end btn" v-if="detial.active_state==3">
+						已结束
+					</view>
+				</template>
 			</view>
 			<view class="count">
 				<view class="text">
-					已有<text class="" big>10</text>人参与
+					已有<text class="" big>{{detial.join_count}}</text>人参与
 				</view>
 				<view class="group">
 					<view class="pic" v-for="(item,index) in 6" :key="index" :style="{zIndex:6-index}">
