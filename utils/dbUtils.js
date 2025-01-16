@@ -32,7 +32,7 @@ export default class DBUtils {
 		tempField = ""
 	}) {
 		try {
-			let queryDB = uniCloud.database();
+			let queryDB = uniCloud.databaseForJQL();
 			let mainQuery = queryDB.collection(this.tableName);
 			let secondQuery;
 			if (secondTable != "") {
