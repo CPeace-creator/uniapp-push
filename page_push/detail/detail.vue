@@ -10,13 +10,11 @@
 						<uni-icons type="home-filled" size="26" color="#fff"></uni-icons>
 					</view>
 				</view>
-				<view class="userInfo">
+				<view class="userInfo" @click="handleUserInfo">
 					<view class="avatar">
 						<image src="../../static/defAvatar.jpg" mode="aspectFill"></image>
 					</view>
-					<view class="name">{{store.userInfo?store.userInfo.nickname:"游客" + Date.now().toString(
-			36) + '-' + Math
-		.random().toString(36).substring(3, 9)}}</view>
+					<view class="name">{{store.hasLogin?store.userInfo.nickname:"点击登录"}}</view>
 				</view>
 			</view>
 			<view class="statusGroup" @click="openPopoup">
@@ -199,6 +197,10 @@
 			detial.value = res.data[0]
 		}
 		console.log(detial.value);
+	}
+	const handleUserInfo = () => {
+		if (!store.hasLogin) return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
+		routeTo("/uni_modules/uni-id-pages/pages/userinfo/userinfo")
 	}
 </script>
 
