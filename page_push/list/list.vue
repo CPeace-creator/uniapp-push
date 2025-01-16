@@ -8,7 +8,8 @@
 				<uni-list-item :title="`${item.nickname}--创建抽奖活动`" clickable note="列表描述信息" showArrow
 					:rightText="getActiveState(item.active_state)"
 					:note="`创建于${dayjs(item.create_time).format('YYYY-MM-DD HH:mm:ss')}\n已参与${item.join_count}人`"
-					v-for="item in dataList" :key="item" @click="routeTo('/page_push/detail/detail')"></uni-list-item>
+					v-for="item in dataList" :key="item"
+					@click="routeTo(`/page_push/detail/detail?id=${item._id}`)"></uni-list-item>
 			</uni-list>
 		</z-paging>
 		<view class="huodong">

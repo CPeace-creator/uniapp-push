@@ -19,7 +19,6 @@ export default class DBUtils {
 
 	async query({
 		query = "",
-		where = "",
 		orderBy = "",
 		options = "",
 		mainTable = "",
@@ -32,6 +31,7 @@ export default class DBUtils {
 		tempField = ""
 	}) {
 		try {
+			console.log(query);
 			let queryDB = uniCloud.databaseForJQL();
 			let mainQuery = queryDB.collection(this.tableName);
 			let secondQuery;
@@ -64,11 +64,10 @@ export default class DBUtils {
 				if (tempField != "") {
 					res = res.field(tempField)
 				}
-				console.log(res);
 				return res.get()
 			} else {
 				const res = await mainQuery.get();
-				return res.result;
+				return res;
 			}
 		} catch (e) {
 			console.error('查询数据失败：', e);
