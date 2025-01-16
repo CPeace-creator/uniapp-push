@@ -10,16 +10,17 @@
 		<template v-if="['apple','weixin', 'weixinMobile', 'huawei', 'huaweiMobile'].includes(type)">
 			<text class="tip">将根据第三方账号服务平台的授权范围获取你的信息</text>
 			<view class="quickLogin">
-				<image v-if="type !== 'weixinMobile' && type !== 'huaweiMobile'" @click="quickLogin" :src="imgSrc" mode="widthFix"
-					class="quickLoginBtn"></image>
+				<image v-if="type !== 'weixinMobile' && type !== 'huaweiMobile'" @click="quickLogin" :src="imgSrc"
+					mode="widthFix" class="quickLoginBtn"></image>
 				<view v-else style="position: relative">
-					<button v-if="type ==='weixinMobile'" type="primary" open-type="getPhoneNumber" @getphonenumber="quickLogin"
-					        class="uni-btn">微信授权手机号登录</button>
+					<button v-if="type ==='weixinMobile'" type="primary" open-type="getPhoneNumber"
+						@getphonenumber="quickLogin" class="uni-btn">微信授权手机号登录</button>
 					<button v-if="type === 'huaweiMobile'" open-type="getPhoneNumber" @getphonenumber="quickLogin"
-					        class="quickLoginBtn" style="padding: 0; display: flex">
+						class="quickLoginBtn" style="padding: 0; display: flex">
 						<image :src="imgSrc" mode="widthFix"></image>
 					</button>
-					<view v-if="this.needAgreements && !this.agree" class="mobile-login-agreement-layer" @click="showAgreementModal"></view>
+					<view v-if="this.needAgreements && !this.agree" class="mobile-login-agreement-layer"
+						@click="showAgreementModal"></view>
 				</view>
 				<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 			</view>
@@ -28,8 +29,8 @@
 			<text class="tip">未注册的账号验证通过后将自动注册</text>
 			<view class="phone-box">
 				<view @click="chooseArea" class="area">+86</view>
-				<uni-easyinput trim="both" :focus="focusPhone" @blur="focusPhone = false" class="input-box" type="number"
-					:inputBorder="false" v-model="phone" maxlength="11" placeholder="请输入手机号" />
+				<uni-easyinput trim="both" :focus="focusPhone" @blur="focusPhone = false" class="input-box"
+					type="number" :inputBorder="false" v-model="phone" maxlength="11" placeholder="请输入手机号" />
 			</view>
 			<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 			<button class="uni-btn" type="primary" @click="toSmsPage">获取验证码</button>
@@ -135,17 +136,19 @@
 			//#endif
 		},
 		methods: {
-			showCurrentWebview(){
+			showCurrentWebview() {
 				// 恢复当前页面窗体的显示 一键登录，默认不显示当前窗口
 				currentWebview.setStyle({
 					"top": 0
 				})
 			},
-			showAgreementModal () {
+			showAgreementModal() {
 				this.$refs.agreements.popup()
 			},
 			quickLogin(e) {
-				let options = {}
+				let options = {
+					uniIdRedirectUrl: this.uniIdRedirectUrl
+				}
 				console.log(e)
 				if (e.detail?.code) {
 					options.phoneNumberCode = e.detail.code
@@ -205,6 +208,7 @@
 		width: 100%;
 		height: 100%;
 	}
+
 	.uni-content,
 	.quickLogin {
 		/* #ifndef APP-NVUE */

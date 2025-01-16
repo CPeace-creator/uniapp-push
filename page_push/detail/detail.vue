@@ -14,7 +14,9 @@
 					<view class="avatar">
 						<image src="../../static/defAvatar.jpg" mode="aspectFill"></image>
 					</view>
-					<view class="name">匿名</view>
+					<view class="name">{{store.userInfo?store.userInfo.nickname:"游客" + Date.now().toString(
+			36) + '-' + Math
+		.random().toString(36).substring(3, 9)}}</view>
 				</view>
 			</view>
 			<view class="statusGroup" @click="openPopoup">
@@ -150,6 +152,10 @@
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
+	import {
+		store
+	} from '@/uni_modules/uni-id-pages/common/store.js'
+	console.log(store);
 	const menuState = ref(true)
 	const pageRoute = ref(getCurrentPages())
 	const resultPopup = ref(null)
@@ -192,7 +198,7 @@
 		if (res.errCode == 0) {
 			detial.value = res.data[0]
 		}
-		console.log(res);
+		console.log(detial.value);
 	}
 </script>
 
