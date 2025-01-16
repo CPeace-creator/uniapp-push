@@ -31,19 +31,8 @@ export default class DBUtils {
 		secondField = "",
 		tempField = ""
 	}) {
-		console.log(query,
-			where,
-			orderBy,
-			options,
-			secondTable,
-			primaryField,
-			secondaryField,
-			queryConditions,
-			mainField,
-			secondField,
-			tempField);
 		try {
-			let queryDB = uniCloud.databaseForJQL();
+			let queryDB = uniCloud.database();
 			let mainQuery = queryDB.collection(this.tableName);
 			let secondQuery;
 			if (secondTable != "") {
