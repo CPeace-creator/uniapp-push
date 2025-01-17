@@ -18,7 +18,7 @@
 				</view>
 			</view>
 			<view class="statusGroup">
-				<template v-if="true">
+				<template v-if="!detial.isJoin">
 					<view class="add btn" @click="handleJoin">
 						<text>点击\n参与</text>
 					</view>
@@ -178,13 +178,44 @@
 		resultPopup.value.close()
 	}
 	const detial = ref(null)
+	const db = uniCloud.database()
+	const dbCmd = db.command
+	const $ = dbCmd.aggregate
+	//获取列表详情
 	const getDetial = async (id) => {
-		let pushData = new DBUtils("push-data")
-		let res = await pushData.query({
-			query: `_id=="${id}"`,
-			orderBy: "create_date desc"
-		})
-		res.data[0].awardsList = res.data[0].awardsList.map(item => {
+		let res =await db.collection("push-data").aggregate()
+		.match({_id:id})
+		.lookup({
+			from:"push-join-user",
+				let:{pushID:"$_id"},
+				pipeline:$.pipeline().match(
+					dbCmd.expr($.and([
+						$.eq(["$$pushID","$push_id"]),
+						$.eq(["$award_user_id",store.userInfo._id])
+					]))
+				).count("length")
+				.done(),
+				as:"joinState"
+			}).project({
+				isJoin:$.cond(
+					{if:$.gt([$.arrayElemAt(['$joinState.length',0]),0]),
+					then:true,
+					else:false}
+				),
+				active_state:true,
+				awardsList:true,
+				create_date:true,
+				join_count:true,
+				ruleText:true,
+				_id:true
+			}).end();
+		// let pushData = new DBUtils("push-data")
+		// let res = await pushData.query({
+		// 	query: `_id=="${id}"`,
+		// 	orderBy: "create_date desc"
+		// })
+		console.log(res.result.data[0]);
+		res.result.data[0].awardsList = res.result.data[0].awardsList.map(item => {
 			//?x-oss-process=iamge/resize,w_120,m_lfit使用阿里云图片压缩
 			return {
 				...item,
@@ -192,10 +223,9 @@
 					"https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/prizePic.webp"
 			}
 		})
-		if (res.errCode == 0) {
-			detial.value = res.data[0]
+		if (res.result.errCode == 0) {
+			detial.value = res.result.data[0]
 		}
-		console.log(detial.value);
 	}
 	const handleUserInfo = () => {
 		if (!store.hasLogin) return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
@@ -305,7 +335,6 @@
 					border-radius: 50%;
 					color: #fff;
 					font-size: 46rpx;
-					background: #999;
 					font-weight: 1000;
 				}
 

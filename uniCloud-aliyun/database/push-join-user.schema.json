@@ -20,7 +20,7 @@
 		"push_id":{
 			"bsonType": "string",
 			"description": "抽奖ID",
-			"foreignKey": "raffle-data._id"			
+			"foreignKey": "push-data._id"			
 		},
 		"order_id":{
 			"bsonType": "string",
