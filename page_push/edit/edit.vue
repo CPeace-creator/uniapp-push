@@ -79,7 +79,7 @@
 			</view>
 		</view>
 		<view class="submitBtn" @click="onSubmit">
-			<button type="primary">确认提交</button>
+			<button type="primary">{{id?"确认修改":"确认提交"}}</button>
 		</view>
 	</view>
 </template>
@@ -99,6 +99,28 @@
 	} from '../../utils/utils';
 	import dayjs from 'dayjs'
 	import DBUtils from '../../utils/dbUtils';
+	import {
+		onLoad
+	} from '@dcloudio/uni-app'
+	const id=ref(null)
+	onLoad(async(e) => {
+		let route = getCurrentPages()[getCurrentPages().length-2].route
+		if(route.includes("page_push/list/list")){
+			return
+		}
+		if(e.id){
+			id.value=e.id
+			getDetial(e.id)
+		}else{
+			let res = await uni.showModal({
+				title:"参数传递错误,请检查",icon:"error",
+				showCancel:false
+			})
+			if(res.confirm){
+				goBack()
+			}
+		}
+	})
 	const awardsList = ref([{
 			name: '一等奖',
 			description: '',
@@ -189,26 +211,47 @@
 			endTime: endTime.value
 		}
 		uni.showLoading({
-			title: "创建奖项中请稍后",
+			title: id.value?"修改奖项中":"创建奖项中",
 			mask: true
 		})
-		const {
-			result: {
-				errCode
-			}
-		} = await pushData.add(formData);
+		let errCode;
+		if (id.value) {
+		    // 如果id大于0，调用update方法
+		    const result = await pushData.update(id.value, formData);
+		    errCode = result.result.errCode;
+			
+		} else {
+		    // 如果id不大于0，调用add方法
+		    const result = await pushData.add(formData);
+		    errCode = result.result.errCode;
+		}
 		if (errCode == 0) {
 			setTimeout(() => {
 				showToast({
-					title: "创建奖项成功"
+					title: id.value?"修改奖项成功":"创建奖项成功"
 				})
 				goBack()
 			}, 1000)
 		} else {
 			showToast({
-				title: "创建奖项失败,请重新尝试",
+				title:  id.value?"修改奖项失败,请重新尝试":"创建奖项失败,请重新尝试",
 				icon: "error"
 			})
+		}
+	}
+	
+	//获取奖品详情
+	const getDetial = async (id) => {
+		let pushData = new DBUtils("push-data")
+		let res = await pushData.query({
+			query: `_id=="${id}"`
+		})
+		if(res.errCode==0){
+			let data=res.data[0]
+			awardsList.value=data.awardsList
+			ruleText.value=data.ruleText
+			isRepeat.value=data.isRepeat
+			endTime.value=data.endTime
 		}
 	}
 </script>

@@ -28,6 +28,12 @@
 	} from 'vue'
 	import DBUtils from '../../utils/dbUtils';
 	import dayjs from 'dayjs';
+	import {
+		onShow
+	} from '@dcloudio/uni-app'
+	onShow(()=>{
+		queryList()
+	})
 	const paging = ref(null)
 	const content = ref(null)
 	const dataList = ref([])

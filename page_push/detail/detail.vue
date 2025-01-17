@@ -12,7 +12,7 @@
 				</view>
 				<view class="userInfo" @click="handleUserInfo">
 					<view class="avatar">
-						<image :src="store.hasLogin?store.userInfo.avatar_file.url+'x-oss-process=iamge/resize,w_120,m_lfit':'../../static/defAvatar.jpg'" mode="aspectFill"></image>
+						<image :src="store.userInfo.avatar_file?store.userInfo.avatar_file.url+'x-oss-process=iamge/resize,w_120,m_lfit':'../../static/defAvatar.jpg'" mode="aspectFill"></image>
 					</view>
 					<view class="name">{{store.hasLogin?store.userInfo.nickname:"点击登录"}}</view>
 				</view>
@@ -92,7 +92,7 @@
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">分享抽奖</view>
 				</view>
-				<view class="item" hover-class="hoverItem" @click="routeTo(`/page_push/edit/edit`)">
+				<view class="item" hover-class="hoverItem" @click="routeTo(`/page_push/edit/edit?id=${detial._id}`)">
 					<uni-icons type="gear-filled" size="30"></uni-icons>
 					<view class="text">设置编辑</view>
 				</view>
