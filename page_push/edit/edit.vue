@@ -1,5 +1,6 @@
 <template>
-	<view class="editPage">
+	<uni-notice-bar showIcon text="活动已经开始,不允许修改奖项内容" background-color="#F56C6C" color="#fff" v-if="isStart"></uni-notice-bar>
+	<view class="editPage" :style="isStart?'pointer-events:none;opacity:0.5s;':''">
 		<uni-notice-bar show-icon text="最多可创建9个奖项,最多支持300人参与游戏抽奖"></uni-notice-bar>
 		<view class="awards">
 			<view class="headTitle">——奖品奖项——</view>
@@ -79,13 +80,14 @@
 			</view>
 		</view>
 		<view class="submitBtn" @click="onSubmit">
-			<button type="primary">{{id?"确认修改":"确认提交"}}</button>
+			<button type="primary" :disabled="isStart">{{id?"确认修改":"确认提交"}}</button>
 		</view>
 	</view>
 </template>
 
 <script setup>
 	import {
+		computed,
 		ref
 	} from 'vue'
 	import {
@@ -136,6 +138,18 @@
 			id: getUUId()
 		},
 	])
+	const detail=ref({})
+	const isStart=computed(()=>{
+		if(!id.value) return false
+		if(detail.value?.active_state!=1 || detail.value?.operLogs?.length>0){
+			
+			console.log(detail.value?.active_state);
+			return true
+		}else{
+			return false
+		}
+		
+	})
 	const addAwards = () => {
 		awardsList.value.push({
 			name: '',
@@ -248,6 +262,7 @@
 		})
 		if(res.errCode==0){
 			let data=res.data[0]
+			detail.value=data
 			awardsList.value=data.awardsList
 			ruleText.value=data.ruleText
 			isRepeat.value=data.isRepeat

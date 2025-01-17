@@ -13,7 +13,7 @@
 			</uni-list>
 		</z-paging>
 		<view class="huodong">
-			<button type="warn" @click="routeTo('/page_push/edit/edit')"><text>活动详情</text></button>
+			<button type="warn" @click="routeTo('/page_push/edit/edit')"><text>+</text></button>
 		</view>
 	</view>
 </template>
