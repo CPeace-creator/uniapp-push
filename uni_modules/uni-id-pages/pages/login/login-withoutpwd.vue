@@ -4,11 +4,7 @@
 		<view class="login-logo">
 			<image :src="logo" mode="aspectFill"></image>
 		</view>
-		<!-- 顶部文字 -->
-		<!-- <text class="title">请选择登录方式</text> -->
-		<!-- 快捷登录框 当url带参数时有效 -->
 		<template v-if="['apple','weixin', 'weixinMobile', 'huawei', 'huaweiMobile'].includes(type)">
-			<!-- <text class="tip">将根据第三方账号服务平台的授权范围获取你的信息</text> -->
 			<view class="quickLogin">
 				<image v-if="type !== 'weixinMobile' && type !== 'huaweiMobile'" @click="quickLogin" :src="imgSrc"
 					mode="widthFix" class="quickLoginBtn"></image>
@@ -35,8 +31,12 @@
 			<uni-id-pages-agreements scope="register" ref="agreements"></uni-id-pages-agreements>
 			<button class="uni-btn" type="primary" @click="toSmsPage">获取验证码</button>
 		</template>
-		<!-- 固定定位的快捷登录按钮 -->
 		<uni-id-pages-fab-login ref="uniFabLogin"></uni-id-pages-fab-login>
+		<view class="footer">
+			<text>版权所有 © 湘江中路</text>
+			<text>|</text>
+			<text @click="toHelpPage">帮助中心</text>
+		</view>
 	</view>
 </template>
 
@@ -193,18 +193,23 @@
 </script>
 
 <style lang="scss" scoped>
-	.login-logo{
+	.uni-content {
+		padding: 20px;
+	}
+
+	.login-logo {
 		display: block;
 		width: 200rpx;
 		height: 200rpx;
-		margin:50rpx auto;
+		margin: 80rpx auto 40rpx;
 		border-radius: 50%;
 		overflow: hidden;
-		image{
+		image {
 			width: 100%;
 			height: 100%;
 		}
 	}
+
 	@import "@/uni_modules/uni-id-pages/common/login-page.scss";
 
 	@media screen and (min-width: 690px) {
@@ -226,6 +231,7 @@
 		/* #ifndef APP-NVUE */
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		/* #endif */
 	}
 
@@ -234,6 +240,9 @@
 		/* #ifndef APP-NVUE */
 		display: flex;
 		/* #endif */
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		margin-bottom: 20px;
 	}
 
 	.area {
@@ -254,7 +263,6 @@
 	}
 
 	/* #ifdef MP */
-	// 解决小程序端开启虚拟节点virtualHost引起的 class = input-box丢失的问题 [详情参考](https://uniapp.dcloud.net.cn/matter.html#%E5%90%84%E5%AE%B6%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E4%B8%8D%E5%90%8C-%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E7%9A%84%E5%B9%B3%E5%8F%B0%E5%85%BC%E5%AE%B9%E9%97%AE%E9%A2%98)
 	.phone-box ::v-deep .uni-easyinput__content,
 	/* #endif */
 	.input-box {
@@ -288,11 +296,36 @@
 	.tip {
 		margin-top: -15px;
 		margin-bottom: 20px;
+		color: #666;
+		font-size: 14px;
+		text-align: center;
 	}
 
 	@media screen and (min-width: 690px) {
 		.quickLogin {
 			height: auto;
+		}
+	}
+
+	.uni-btn {
+		background: linear-gradient(to right, #007AFF, #0055DD);
+		color: #fff;
+		border: none;
+		border-radius: 5px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		margin-bottom: 20px;
+	}
+
+	.footer {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-top: 40px;
+		color: #999;
+		font-size: 12px;
+		text {
+			margin: 0 10px;
+			cursor: pointer;
 		}
 	}
 </style>
