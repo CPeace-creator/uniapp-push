@@ -17,9 +17,9 @@
 					<view class="name">{{store.hasLogin?store.userInfo.nickname:"点击登录"}}</view>
 				</view>
 			</view>
-			<view class="statusGroup" @click="openPopoup">
+			<view class="statusGroup">
 				<template v-if="true">
-					<view class="add btn">
+					<view class="add btn" @click="handleJoin">
 						<text>点击\n参与</text>
 					</view>
 				</template>
@@ -144,7 +144,8 @@
 		getStatusBarHeight,
 		getTitleBarHeight,
 		goBack,
-		routeTo
+		routeTo,
+		showToast
 	} from '../../utils/utils';
 	import DBUtils from '../../utils/dbUtils';
 	import {
@@ -153,7 +154,6 @@
 	import {
 		store
 	} from '@/uni_modules/uni-id-pages/common/store.js'
-	console.log(store);
 	const menuState = ref(true)
 	const pageRoute = ref(getCurrentPages())
 	const resultPopup = ref(null)
@@ -164,16 +164,15 @@
 			current: index
 		})
 	}
+	const id=ref(null)
 	onLoad((e) => {
+		id.value=e.id
 		getDetial(e.id)
 	})
 	const menuChange = () => {
 		menuState.value = !menuState.value
 	}
 	const runPopup = ref(null)
-	const openPopoup = () => {
-		resultPopup.value.open()
-	}
 
 	const closeResultPopup = () => {
 		resultPopup.value.close()
@@ -201,6 +200,28 @@
 	const handleUserInfo = () => {
 		if (!store.hasLogin) return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
 		routeTo("/uni_modules/uni-id-pages/pages/userinfo/userinfo")
+	}
+	
+	//点击参与
+	const handleJoin=async()=>{
+		if (!store.hasLogin) {
+			return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
+		}else{
+			uni.showToast({
+				title:"请稍后",mask:true
+			})
+			try{
+				let pushData = new DBUtils("push-join-user")
+				let {result:{errCode}}= await pushData.add({push_id:id.value,award_user_id:store.userInfo._id})
+				if(errCode==0) uni.showToast({
+					title:"参与成功"
+				})
+				getDetial()
+			}catch(err){
+				showToast({title:err})
+			}
+		}
+		
 	}
 </script>
 
