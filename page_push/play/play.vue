@@ -1,5 +1,5 @@
 <template>
-	<view class="play">
+	<view class="play" v-if="detail">
 		<view class="options">
 			<view class="row">
 				<view class="left">
@@ -25,7 +25,7 @@
 				<text v-if="true" class="end">已结束</text>
 			</view>
 		</view>
-		<view class="logs">
+		<view class="logs" v-if="detail.operLogs && detail.operLogs.length>0">
 			<view class="title">
 				——开奖记录——
 			</view>
@@ -41,19 +41,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import {
+		onLoad
+	} from '@dcloudio/uni-app'
+import DBUtils from '../../utils/dbUtils';
+const id = ref(null)
+onLoad((e)=>{
+	id.value=e.pushId
+	getDetail()
+})	
 const formData=ref({
 	aid:"",
 	number:0
 })
-const range=ref([
-	{value:0,text:'一等奖'},
-	{value:1,text:'一等奖'},
-	{value:2,text:'一等奖'},
-])
+const range=computed(()=>detail.value?.awardsList.map(item=>({value:item.id,text:item.name})))
+const detail=ref()
 //下拉框选择事件
 const selectChange=(e)=>{
 	formData.value.number=0
+}
+
+//获取抽奖内容
+const getDetail=async ()=>{
+	let push=new DBUtils("push-data")
+	let {data:[obj]}=await push.query({query:`_id=="${id.value}"`})
+	detail.value=obj
 }
 </script>
 

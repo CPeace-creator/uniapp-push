@@ -62,7 +62,8 @@
 		},
 		"operLogs": {
 			"bsonType": "array",
-			"description": "开奖记录"
+			"description": "开奖记录",
+			"defaultValue":[]
 		},
 		"publish_ip": {
 			"bsonType": "string",
