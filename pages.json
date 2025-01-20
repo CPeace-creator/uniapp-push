@@ -163,5 +163,8 @@
 			"page_push/.*"
 		],
 		"resToLogin": true
-	}
+	},
+	"usingComponents": {
+	    "z-paging": "uni_modules/z-paging/components/z-paging/z-paging"
+	  }
 }
