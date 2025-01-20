@@ -35,7 +35,7 @@
 					</view>
 				</template>
 			</view>
-			<view class="count">
+			<view class="count" @click="routeTo(`/page_push/detail/join_user?pushId=${detial._id}`)">
 				<view class="text">
 					已有<text class="" big>{{detial.join_count}}</text>人参与
 				</view>
@@ -366,9 +366,11 @@
 			.count {
 				position: absolute;
 				text-align: center;
-				top: 1300rpx;
-				width: 100%;
-
+				top: 1330rpx;
+				width: fit-content;
+				left: 270rpx;
+				right:0;
+				margin:0,auto;
 				.text {
 					font-size: 34rpx;
 
