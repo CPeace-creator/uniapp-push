@@ -34,8 +34,8 @@
 			</view>
 			<view class="content">
 				<uni-list>
-					<uni-list-item v-for="(item,index) in 5" :key="item" :to="`./list`"
-					clickable="true" showArrow :title="`第${index+1}轮开奖`" note="描述文字" right-text="右侧文本内容"></uni-list-item>
+					<uni-list-item v-for="(item,index) in detail.operLogs" :key="item" :to="`./list`"
+					:note="`${item.name} - ${item.number}人`" clickable="true" showArrow :title="`第${index+1}轮开奖`"  :right-text="dayjs(item.create_date).format('YYYY-MM-DD HH:mm:ss')"></uni-list-item>
 				</uni-list>
 			</view>
 			
@@ -46,16 +46,22 @@
 <script setup>
 import { computed, ref } from 'vue';
 import {
-		onLoad
+		onLoad,onUnload
 	} from '@dcloudio/uni-app'
 import DBUtils from '../../utils/dbUtils';
 import { showToast } from '../../utils/utils';
 import { getUUId } from '../../utils/tools';
+import dayjs from 'dayjs';
 const id = ref(null)
 onLoad((e)=>{
 	id.value=e.pushId
 	getDetail()
 })	
+onUnload(async(e)=>{
+	if(detail.value.active_state===2){
+		await pushCloudObj.update({pushId:id.value,active_state:1,reset:true})
+	}
+})
 const formData=ref({
 	id:getUUId(),
 	aid:"",
@@ -70,8 +76,11 @@ const pushCloudObj = uniCloud.importObject("push-operation")
 //下拉框选择事件
 const selectChange=(e)=>{
 	formData.value.number=0
+	let sum  = detail.value.operLogs.filter(item=>item.aid===formData.value.aid).reduce((prev,current)=>{
+		return prev+current.number
+	},0)
 	let find = detail.value.awardsList.find(item=>item.id===formData.value.aid)
-	maxNumber.value=find.number;
+	maxNumber.value=find.number - sum;
 }
 //清空数据
 const init=()=>{
@@ -87,6 +96,17 @@ const getDetail=async ()=>{
 	let push=new DBUtils("push-data")
 	let {data:[obj]}=await push.query({query:`_id=="${id.value}"`})
 	detail.value=obj
+	detail.value.operLogs=detail.value?.operLogs?.map(item=>{
+			let find = detail.value.awardsList.find(find=>find.id==item.aid)
+			if(find){
+				return {
+					...item,
+					name:find?.name ?? "未命名"
+				}
+			}else{
+				return {...item}
+			}
+		}) ?? []
 }
 
 //点击抽奖

@@ -9,7 +9,7 @@ module.exports = {
 	 * @param {string} param1 参数1描述
 	 * @returns {object} 返回值描述
 	 */
-	async update({pushId=null,active_state=null,formData=null}){
+	async update({pushId=null,active_state=null,formData=null,reset=false}){
 		let updateData={
 			active_state
 		}
