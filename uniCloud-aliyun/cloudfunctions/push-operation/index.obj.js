@@ -40,17 +40,27 @@ module.exports = {
 		let updateData={
 			active_state
 		}
-		console.log(formData);
 		if(formData){
 			//获取满足条件的用户
 			let userList = await getUserListAll(pushId)
+			let {data:[{isRepeat}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true}).get()
+			let tempUserList =[...userList]
+			if(!isRepeat){
+				let {data}=await db.collection("push-award-user").where({push_id:pushId}).field({award_user_id:true}).get()
+				let awUsers=data.map(item=>item.award_user_id)
+				tempUserList = userList.filter(item=>!awUsers.includes(item))
+			}
 			//满足条件用户内随机前端传过来的number
-			let award_user= getRandomElements(userList,formData.number)
+			let award_user= getRandomElements(tempUserList,formData.number)
 			//将新用户放到保存中奖纪录表中 push-award-user
 			let addArr= award_user.map(item=>{
 				return {
 					award_user_id:item,
-					create_date:Date.now()
+					push_id:pushId,
+					order_id:formData.id,
+					award_id:formData.aid,
+					create_date:Date.now(),
+					status:0
 				}
 			})
 			db.collection("push-award-user").add(addArr)

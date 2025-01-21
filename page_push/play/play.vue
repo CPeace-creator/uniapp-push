@@ -16,7 +16,7 @@
 				<view class="right">
 					<view class="group">
 						<uv-number-box :min="0" :max="maxNumber" v-model="formData.number"></uv-number-box>
-						<text>还剩{{maxNumber}}个名额</text>
+						<text v-if="formData.aid">还剩{{maxNumber}}个名额</text>
 					</view>
 				</view>
 			</view>
@@ -114,16 +114,14 @@ const handlePush=async ()=>{
 	if(detail.value.active_state==1){
 		if(!formData.value.aid) return showToast({title:"抽奖选项未选择"})
 		if(formData.value.number==0) return showToast({title:"抽奖数量不能为0"})
-		detail.value.active_state=2
 		let res =await pushCloudObj.update({pushId:id.value,active_state:2})
+		detail.value.active_state=2
 		return
 	}
 	if(detail.value.active_state==2){
 		formData.value.create_date=Date.now()
 		console.log(formData.value);
 		let res =await pushCloudObj.update({pushId:id.value,active_state:1,formData:formData.value})
-		console.log(res);
-		return
 		getDetail()
 		return
 	}
