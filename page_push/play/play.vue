@@ -116,11 +116,11 @@ const handlePush=async ()=>{
 		if(formData.value.number==0) return showToast({title:"抽奖数量不能为0"})
 		detail.value.active_state=2
 		let res =await pushCloudObj.update({pushId:id.value,active_state:2})
-		console.log(res);
 		return
 	}
 	if(detail.value.active_state==2){
 		formData.value.create_date=Date.now()
+		console.log(formData.value);
 		let res =await pushCloudObj.update({pushId:id.value,active_state:1,formData:formData.value})
 		console.log(res);
 		return

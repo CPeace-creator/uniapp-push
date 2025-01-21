@@ -1,5 +1,6 @@
 const db =uniCloud.database()
 const dbCmd = db.command
+//获取满足条件的用户
 async function getUserListAll(pushId){
 	let limit = 100; // 每次查询的数量
 	let offset = 0; // 偏移量	
@@ -14,8 +15,17 @@ async function getUserListAll(pushId){
 	let result = arr.map(item=>{
 		return item.data
 	}).flat();//返回的是每个的数据对象，将需要的res.data返回，并flat将二维数组变为一维数组
-	console.log(result);
-	return result
+	return result.map(item=>item.award_user_id)
+}
+
+//获取随机用户数组
+function getRandomElements(arr, count) {
+    const shuffled = arr.slice(0); // 创建数组的副本
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1)); // 随机选择一个索引
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // 交换元素
+    }
+    return shuffled.slice(0, count); // 返回随机选择的前`count`个元素
 }
 module.exports = {
 	_before: function () { // 通用预处理器
@@ -30,11 +40,20 @@ module.exports = {
 		let updateData={
 			active_state
 		}
+		console.log(formData);
 		if(formData){
 			//获取满足条件的用户
 			let userList = await getUserListAll(pushId)
-			return userList
-			return
+			//满足条件用户内随机前端传过来的number
+			let award_user= getRandomElements(userList,formData.number)
+			//将新用户放到保存中奖纪录表中 push-award-user
+			let addArr= award_user.map(item=>{
+				return {
+					award_user_id:item,
+					create_date:Date.now()
+				}
+			})
+			db.collection("push-award-user").add(addArr)
 			updateData.operLogs=dbCmd.push([formData])
 		}
 		return await db.collection("push-data").where({_id:pushId}).update(updateData)

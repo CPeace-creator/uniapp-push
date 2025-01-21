@@ -46,7 +46,6 @@
 			tempField: "active_state,create_date,join_count,arrayElemAt(user_id.nickname,0) as nickname,_id",
 			orderBy: "create_time desc"
 		})
-		console.log(res.data);
 		if (res.errCode == 0) {
 			paging.value.complete(res.data);
 		} else {

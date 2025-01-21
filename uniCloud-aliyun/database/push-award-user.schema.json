@@ -1,0 +1,46 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": [],
+	"permission": {
+		"read": false,
+		"create": false,
+		"update": false,
+		"delete": false
+	},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"award_user_id":{
+			"bsonType": "string",
+			"description": "中奖用户id",
+			"foreignKey": "uni-id-users._id"
+		},
+		"push_id":{
+			"bsonType": "string",
+			"description": "抽奖ID",
+			"foreignKey": "push-data._id"			
+		},
+		"order_id":{
+			"bsonType": "string",
+			"description": "第几轮抽奖的id"
+		},
+		"award_id":{
+			"bsonType": "string",
+			"description": "奖项ID"
+		},
+		"status":{
+			"bsonType": "int",
+			"description": "兑换状态 0未兑奖 1已兑换",
+			"defaultValue":0
+		},
+		"create_date": {
+			"bsonType": "timestamp",
+			"description": "发表时间",
+			"defaultValue": {
+				"$env": "now"
+			}
+		}
+	}
+}
