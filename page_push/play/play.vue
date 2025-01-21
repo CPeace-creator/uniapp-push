@@ -65,30 +65,45 @@ const range=computed(()=>detail.value?.awardsList.map(item=>({value:item.id,text
 const detail=ref({})
 //抽奖个数
 const maxNumber=ref(0)
+//使用云对象
+const pushCloudObj = uniCloud.importObject("push-operation")
 //下拉框选择事件
 const selectChange=(e)=>{
 	formData.value.number=0
 	let find = detail.value.awardsList.find(item=>item.id===formData.value.aid)
 	maxNumber.value=find.number;
 }
-
+//清空数据
+const init=()=>{
+	formData.value={
+		id:getUUId(),
+		aid:"",
+		number:0
+	}
+}
 //获取抽奖内容
 const getDetail=async ()=>{
+	init()
 	let push=new DBUtils("push-data")
 	let {data:[obj]}=await push.query({query:`_id=="${id.value}"`})
 	detail.value=obj
 }
 
 //点击抽奖
-const handlePush=()=>{
+const handlePush=async ()=>{
 	if(detail.value.active_state==1){
 		if(!formData.value.aid) return showToast({title:"抽奖选项未选择"})
 		if(formData.value.number==0) return showToast({title:"抽奖数量不能为0"})
 		detail.value.active_state=2
+		let res =await pushCloudObj.update({pushId:id.value,active_state:2})
+		console.log(res);
+		return
 	}
 	if(detail.value.active_state==2){
 		formData.value.create_date=Date.now()
-		// getDetail()
+		let res =await pushCloudObj.update({pushId:id.value,active_state:1,formData:formData.value})
+		getDetail()
+		return
 	}
 	if(detail.value.active_state==3){
 		return showToast({title:"活动已结束"})
