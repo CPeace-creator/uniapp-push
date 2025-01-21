@@ -115,6 +115,7 @@ const handlePush=async ()=>{
 		if(!formData.value.aid) return showToast({title:"抽奖选项未选择"})
 		if(formData.value.number==0) return showToast({title:"抽奖数量不能为0"})
 		let res =await pushCloudObj.update({pushId:id.value,active_state:2})
+		if(res.code==400) return showToast({title:res.msg})
 		detail.value.active_state=2
 		return
 	}

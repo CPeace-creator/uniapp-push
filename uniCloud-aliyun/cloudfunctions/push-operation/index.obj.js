@@ -40,16 +40,19 @@ module.exports = {
 		let updateData={
 			active_state
 		}
+		//获取满足条件的用户
+		let userList = await getUserListAll(pushId)
+		let {data:[{isRepeat}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true}).get()
+		let tempUserList =[...userList]
+		if(!isRepeat){
+			let {data}=await db.collection("push-award-user").where({push_id:pushId}).field({award_user_id:true}).get()
+			let awUsers=data.map(item=>item.award_user_id)
+			tempUserList = userList.filter(item=>!awUsers.includes(item))
+		}
+		if(tempUserList.length==0){
+			return {code:400,msg:"无满足用户或参与用户已全部中奖,无法中奖"}
+		}
 		if(formData){
-			//获取满足条件的用户
-			let userList = await getUserListAll(pushId)
-			let {data:[{isRepeat}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true}).get()
-			let tempUserList =[...userList]
-			if(!isRepeat){
-				let {data}=await db.collection("push-award-user").where({push_id:pushId}).field({award_user_id:true}).get()
-				let awUsers=data.map(item=>item.award_user_id)
-				tempUserList = userList.filter(item=>!awUsers.includes(item))
-			}
 			//满足条件用户内随机前端传过来的number
 			let award_user= getRandomElements(tempUserList,formData.number)
 			//将新用户放到保存中奖纪录表中 push-award-user
