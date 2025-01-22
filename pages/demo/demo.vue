@@ -15,7 +15,7 @@
 <script setup>
 import {ref,computed, nextTick} from "vue"
 import _ from 'lodash'
-const sendObj=uniCloud.importObject("demo-push")
+const sendObj=uniCloud.importObject("demo-push",{customUI:true}) //customUI关闭网络请求
 const menu=ref([
 	{id:1,name:"羊肉串",price:150,number:1},
 	{id:2,name:"鸡翅2",price:150,number:2},
