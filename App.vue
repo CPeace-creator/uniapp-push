@@ -1,7 +1,7 @@
 <script setup>
 import uniIdPageInit from '@/uni_modules/uni-id-pages/init.js';
 import {onLaunch} from '@dcloudio/uni-app'
-onLanuch(async()=>{
+onLaunch(async()=>{
 	console.log('App Launch')
 	await uniIdPageInit()
 })
