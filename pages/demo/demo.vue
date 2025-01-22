@@ -14,6 +14,7 @@
 
 <script setup>
 import {ref,computed, nextTick} from "vue"
+import _ from 'lodash'
 const sendObj=uniCloud.importObject("demo-push")
 const menu=ref([
 	{id:1,name:"羊肉串",price:150,number:1},
@@ -50,7 +51,8 @@ uni.onPushMessage(res=>{
 		}
 	})
 })
-const changeNumber=()=>{
+const changeNumber=_.debounce(handleNumberChange,1000,{'leading':false,'trailing':true})
+function handleNumberChange(){
 	nextTick(()=>{
 		let arrs = menu.value.map(item => ({
 		    id: item.id, 
