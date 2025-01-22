@@ -92,7 +92,7 @@
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">分享抽奖</view>
 				</view>
-				<view class="item" hover-class="hoverItem" @click="routeTo(`/page_push/edit/edit?id=${detial._id}`)">
+				<view v-if="detial.user_id==store.userInfo._id" class="item" hover-class="hoverItem" @click="routeTo(`/page_push/edit/edit?id=${detial._id}`)">
 					<uni-icons type="gear-filled" size="30"></uni-icons>
 					<view class="text">设置编辑</view>
 				</view>
@@ -100,7 +100,7 @@
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">抽奖管理</view>
 				</view>
-				<view class="item" hover-class="hoverItem">
+				<view v-if="detial.user_id==store.userInfo._id" class="item" hover-class="hoverItem">
 					<uni-icons type="scan" size="30"></uni-icons>
 					<view class="text">扫码核销</view>
 				</view>
@@ -207,6 +207,7 @@
 				create_date:true,
 				join_count:true,
 				ruleText:true,
+				user_id:true,
 				_id:true
 			}).end();
 		// let pushData = new DBUtils("push-data")

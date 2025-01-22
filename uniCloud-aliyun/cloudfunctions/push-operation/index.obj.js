@@ -1,5 +1,6 @@
 const db =uniCloud.database()
 const dbCmd = db.command
+const uniID=require("uni-id-common")
 //获取满足条件的用户
 async function getUserListAll(pushId){
 	let limit = 100; // 每次查询的数量
@@ -27,6 +28,16 @@ function getRandomElements(arr, count) {
     }
     return shuffled.slice(0, count); // 返回随机选择的前`count`个元素
 }
+
+//获取当前用户的信息
+async function getUserInfo(that){
+	let token =that.getUniIdToken()
+	let clientInfo = that.getClientInfo()
+	let unidIns = uniID.createInstance({clientInfo})
+	let res =await unidIns.checkToken(token)
+	if(res.errCode!=0) throw new Error(res.errMsg)
+	return res
+}
 module.exports = {
 	_before: function () { // 通用预处理器
 
@@ -37,12 +48,18 @@ module.exports = {
 	 * @returns {object} 返回值描述
 	 */
 	async update({pushId=null,active_state=null,formData=null,reset=false}){
+		let {uid,role} =await getUserInfo(this)
 		let updateData={
 			active_state
 		}
 		//获取满足条件的用户
+		let {data:[{isRepeat,user_id}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true,user_id:true}).get()
+		//判断操作者是否是同一个人
+		if(uid!=user_id){
+			throw new Error("权限不足不能抽奖")
+		}
+		//获取所有满足抽奖的用户者
 		let userList = await getUserListAll(pushId)
-		let {data:[{isRepeat}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true}).get()
 		let tempUserList =[...userList]
 		if(!isRepeat){
 			let {data}=await db.collection("push-award-user").where({push_id:pushId}).field({award_user_id:true}).get()
