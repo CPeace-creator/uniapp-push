@@ -254,6 +254,10 @@
 		}
 		
 	}
+uni.onPushMessage(res=>{
+	console.log("推送消息",res)
+	detial.value.active_state=res.data.payload.active_state
+}) 
 </script>
 
 <style scoped lang="scss">
