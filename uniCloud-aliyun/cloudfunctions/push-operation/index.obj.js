@@ -1,6 +1,9 @@
 const db =uniCloud.database()
 const dbCmd = db.command
 const uniID=require("uni-id-common")
+function uniPush(){
+	return  uniCloud.getPushManager({appId:"__UNI__D5ADB49"})
+}
 //获取满足条件的用户
 async function getUserListAll(pushId){
 	let limit = 100; // 每次查询的数量
@@ -52,6 +55,11 @@ module.exports = {
 		let updateData={
 			active_state
 		}
+		//给客户端推送数据
+		let payload={
+			time:Date.now(),
+			active_state
+		}
 		//获取满足条件的用户
 		let {data:[{isRepeat,user_id}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true,user_id:true}).get()
 		//判断操作者是否是同一个人
@@ -69,6 +77,7 @@ module.exports = {
 		if(tempUserList.length==0){
 			return {code:400,msg:"无满足用户或参与用户已全部中奖,无法中奖"}
 		}
+		//状态由2-1 停止->点击参与
 		if(formData){
 			//满足条件用户内随机前端传过来的number
 			let award_user= getRandomElements(tempUserList,formData.number)
@@ -85,6 +94,17 @@ module.exports = {
 			})
 			db.collection("push-award-user").add(addArr)
 			updateData.operLogs=dbCmd.push([formData])
+		}else{
+			console.log("参加人员",userList);
+			//状态由1-2 点击参与->停止
+			//全员通知抽奖开始
+			uniPush().sendMessage({
+				user_id:userList,
+				title:"大转盘抽奖",
+				content:"大转盘抽奖抽奖中",
+				payload:payload
+		})
+			
 		}
 		return await db.collection("push-data").where({_id:pushId}).update(updateData)
 	}

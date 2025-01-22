@@ -8,6 +8,7 @@ const SYSTEM_INFO = uni.getSystemInfoSync();
 export const getStatusBarHeight = () => SYSTEM_INFO.statusBarHeight || 15;
 
 export const getTitleBarHeight = () => {
+	// #ifdef MP-WEIXIN || MP-QQ || MP-BAIDU || MP-TOUTIAO
 	if (uni.getMenuButtonBoundingClientRect()) {
 		let {
 			top,
@@ -17,6 +18,8 @@ export const getTitleBarHeight = () => {
 	} else {
 		return 40;
 	}
+	// #endif
+	return 40
 }
 
 export const routeTo = (url, type = 'navigate') => {

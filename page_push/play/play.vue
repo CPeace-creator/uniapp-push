@@ -52,6 +52,10 @@ import DBUtils from '../../utils/dbUtils';
 import { showToast } from '../../utils/utils';
 import { getUUId } from '../../utils/tools';
 import dayjs from 'dayjs';
+uni.onPushMessage(res=>{
+	console.log("推送消息",res)
+	detail.value.active_state=res.data.payload.active_state
+}) 
 const id = ref(null)
 onLoad((e)=>{
 	id.value=e.pushId
@@ -67,7 +71,12 @@ const formData=ref({
 	aid:"",
 	number:0
 })
-const range=computed(()=>detail.value?.awardsList.map(item=>({value:item.id,text:item.name})))
+const range=computed(()=>{
+	if(detail.value.awardsList){
+		return detail.value.awardsList.map(item=>({value:item.id,text:item.name}))
+	}
+	return []
+})
 const detail=ref({})
 //抽奖个数
 const maxNumber=ref(0)

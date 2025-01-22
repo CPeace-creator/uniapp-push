@@ -3,7 +3,7 @@
 		<view class="main" :style="{paddingTop: getStatusBarHeight()+'px'}">
 			<view class="titleBar" :style="{height:getTitleBarHeight()+'px'}">
 				<view class="menu">
-					<view class="item" @click="goBack()" v-if="pageRoute>1">
+					<view class="item" @click="goBack()" v-if="pageRoute.length>1">
 						<uni-icons type="left" size="26" color="#fff"></uni-icons>
 					</view>
 					<view class="item" @click="routeTo('/page_push/list/list','redirectTo')">
@@ -18,7 +18,7 @@
 				</view>
 			</view>
 			<view class="statusGroup">
-				<template v-if="!detial.isJoin">
+				<template v-if="!detial?.isJoin">
 					<view class="add btn" @click="handleJoin">
 						<text>点击\n参与</text>
 					</view>
@@ -37,7 +37,7 @@
 			</view>
 			<view class="count" @click="routeTo(`/page_push/detail/join_user?pushId=${detial._id}`)">
 				<view class="text">
-					已有<text class="" big>{{detial.join_count}}</text>人参与
+					已有<text class="" big>{{detial?.join_count}}</text>人参与
 				</view>
 				<view class="group">
 					<view class="pic" v-for="(item,index) in 6" :key="index" :style="{zIndex:6-index}">
@@ -50,7 +50,7 @@
 			<view class="item">
 				<view class="title">——奖品奖项——</view>
 				<view class="content">
-					<view class="row" v-for="(item,index) in detial.awardsList" :key="item.id">
+					<view class="row" v-for="(item,index) in detial?.awardsList" :key="item.id">
 						<view class="pic" @click="clickAwardPic(index)">
 							<image :src="item.picUrl" mode="aspectFill">
 							</image>
@@ -70,7 +70,7 @@
 				<view class="title rule">——规则说明——</view>
 				<view class="content">
 					<text>
-						{{detial.ruleText}}
+						{{detial?.ruleText}}
 					</text>
 				</view>
 			</view>
@@ -92,15 +92,15 @@
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">分享抽奖</view>
 				</view>
-				<view v-if="detial.user_id==store.userInfo._id" class="item" hover-class="hoverItem" @click="routeTo(`/page_push/edit/edit?id=${detial._id}`)">
+				<view v-if="detial?.user_id==store.userInfo._id" class="item" hover-class="hoverItem" @click="routeTo(`/page_push/edit/edit?id=${detial._id}`)">
 					<uni-icons type="gear-filled" size="30"></uni-icons>
 					<view class="text">设置编辑</view>
 				</view>
-				<view class="item" hover-class="hoverItem" @click="routeTo(`/page_push/play/play?pushId=${detial._id}`)">
+				<view v-if="detial?.user_id==store.userInfo._id" class="item" hover-class="hoverItem" @click="routeTo(`/page_push/play/play?pushId=${detial._id}`)">
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">抽奖管理</view>
 				</view>
-				<view v-if="detial.user_id==store.userInfo._id" class="item" hover-class="hoverItem">
+				<view v-if="detial?.user_id==store.userInfo._id" class="item" hover-class="hoverItem">
 					<uni-icons type="scan" size="30"></uni-icons>
 					<view class="text">扫码核销</view>
 				</view>
