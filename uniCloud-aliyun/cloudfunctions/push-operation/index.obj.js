@@ -61,7 +61,7 @@ module.exports = {
 			active_state
 		}
 		//获取满足条件的用户
-		let {data:[{isRepeat,user_id}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true,user_id:true}).get()
+		let {data:[{isRepeat,user_id,awardsList}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true,user_id:true,awardsList:true}).get()
 		//判断操作者是否是同一个人
 		if(uid!=user_id){
 			throw new Error("权限不足不能抽奖")
@@ -95,17 +95,30 @@ module.exports = {
 			})
 			db.collection("push-award-user").add(addArr)
 			updateData.operLogs=dbCmd.push([formData])
+			let find = awardsList.find(find=>find.id==formData.aid)
 			uniPush().sendMessage({
 					user_id:award_user,
 					title:"抽奖结果",
 					content:"恭喜中奖",
-					payload:payload
+					payload:{
+						...payload,
+						result:{
+							value:1,
+							name:find.name,
+							description:find.description
+						}
+					}
 			})
 			uniPush().sendMessage({
 					user_id:not_award_user,
 					title:"抽奖结果",
 					content:"没有中奖",
-					payload:payload
+					payload:{
+						...payload,
+						result:{
+							value:0
+						}
+					}
 			})
 		}else{
 			//状态由1-2 点击参与->停止

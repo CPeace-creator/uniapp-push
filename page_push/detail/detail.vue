@@ -1,5 +1,5 @@
 <template>
-	<view class="detail">
+	<view class="detail" v-if="detial">
 		<view class="main" :style="{paddingTop: getStatusBarHeight()+'px'}">
 			<view class="titleBar" :style="{height:getTitleBarHeight()+'px'}">
 				<view class="menu">
@@ -121,12 +121,15 @@
 	</uni-popup>
 	<uni-popup :is-mask-click="false" ref="resultPopup" mask-background-color="rgba(0,0,0,0.8)">
 		<view class="resultPopup">
-			<view class="bg win" v-if="true">
+			<view class="bg win" v-if="detial?.result?.value==1">
 				<view class="text">
-					一等奖
+					{{detial.result.name}}
+					<view class="subTxt">
+						({{detial.result.description}})
+					</view>
 				</view>
 			</view>
-			<view class="bg loser" v-else>
+			<view class="bg loser" v-if="detial?.result?.value==0">
 
 			</view>
 			<view class="close" @click="closeResultPopup">
@@ -265,6 +268,7 @@ uni.onPushMessage(res=>{
 	}
 	//活动停止
 	if(detial.value.active_state==1){
+		detial.value.result=res.data.payload.result
 		runPopup.value.close()
 		resultPopup.value.open()
 		return
@@ -632,7 +636,7 @@ uni.onPushMessage(res=>{
 			background-image: url('https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/win.png');
 
 			.text {
-				line-height: 120rpx;
+				height: 120rpx;
 				text-align: center;
 				position: absolute;
 				width: 100%;
@@ -641,7 +645,14 @@ uni.onPushMessage(res=>{
 				color: #fff;
 				font-size: 46rpx;
 				font-weight: bolder;
-
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				.subTxt{
+					font-size: 26rpx;
+					padding-top: 10rpx;
+				}
 			}
 		}
 
