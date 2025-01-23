@@ -170,7 +170,7 @@
 	const id=ref(null)
 	onLoad((e) => {
 		id.value=e.id
-		getDetial(e.id)
+		getDetial()
 	})
 	const menuChange = () => {
 		menuState.value = !menuState.value
@@ -185,9 +185,9 @@
 	const dbCmd = db.command
 	const $ = dbCmd.aggregate
 	//获取列表详情
-	const getDetial = async (id) => {
+	const getDetial = async () => {
 		let res =await db.collection("push-data").aggregate()
-		.match({_id:id})
+		.match({_id:id.value})
 		.lookup({
 			from:"push-join-user",
 				let:{pushID:"$_id"},
@@ -218,7 +218,7 @@
 		// 	query: `_id=="${id}"`,
 		// 	orderBy: "create_date desc"
 		// })
-		console.log(res.result.data[0]);
+		console.log(res);
 		res.result.data[0].awardsList = res.result.data[0].awardsList.map(item => {
 			//?x-oss-process=iamge/resize,w_120,m_lfit使用阿里云图片压缩
 			return {
@@ -267,21 +267,27 @@
 	}
 uni.onPushMessage(res=>{
 	console.log("推送消息",res)
-	detial.value.active_state=res.data.payload.active_state
-	//活动开始
-	if(detial.value.active_state==2){
-		resultPopup.value.close()
-		runPopup.value.open()
-		return
+	if(res.data.payload.type=='push'){
+		detial.value.active_state=res.data.payload.active_state
+		//活动开始
+		if(detial.value.active_state==2){
+			resultPopup.value.close()
+			runPopup.value.open()
+			return
+		}
+		//活动停止
+		if(detial.value.active_state==1){
+			if(res.data.payLoad?.reset) return runPopup.value.close()
+			detial.value.result=res.data.payload.result
+			runPopup.value.close()
+			resultPopup.value.open()
+			return
+		}
 	}
-	//活动停止
-	if(detial.value.active_state==1){
-		if(res.data.payLoad?.reset) return runPopup.value.close()
-		detial.value.result=res.data.payload.result
-		runPopup.value.close()
-		resultPopup.value.open()
-		return
+	if(res.data.payload.type=='joinUser'){
+		detial.value.join_count = res.data.payload.join_count
 	}
+	
 }) 
 </script>
 

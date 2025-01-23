@@ -6,6 +6,7 @@ function uniPush(){
 }
 //获取满足条件的用户
 async function getUserListAll(pushId){
+	console.log("抽奖id",pushId);
 	let limit = 100; // 每次查询的数量
 	let offset = 0; // 偏移量	
 	let {total} = await db.collection("push-join-user").where({push_id:pushId}).count();		
@@ -58,7 +59,8 @@ module.exports = {
 		//给客户端推送数据
 		let payload={
 			time:Date.now(),
-			active_state
+			active_state,
+			type:"push"
 		}
 		//获取满足条件的用户
 		let {data:[{isRepeat,user_id,awardsList}]} = await db.collection("push-data").where({_id:pushId}).field({isRepeat:true,user_id:true,awardsList:true}).get()
@@ -134,5 +136,22 @@ module.exports = {
 			
 		}
 		return await db.collection("push-data").where({_id:pushId}).update(updateData)
+	},
+	async joinUserSend({push_id=null}){
+		//获取所有满足抽奖的用户者
+		let userList = await getUserListAll(push_id)
+		userList = [...new Set(userList)]
+		console.log("用户信息",userList);
+		let {data:[{join_count}]}=await db.collection("push-data").where({_id:push_id}).field({join_count:true}).get()
+		uniPush().sendMessage({
+				user_id:userList,
+				title:"实时参与人数统计",
+				content:"获取参与当前投票的人员信息",
+				payload:{
+					time:Date.now(),
+					join_count:join_count,
+					type:"joinUser"
+				}
+		})
 	}
 }
