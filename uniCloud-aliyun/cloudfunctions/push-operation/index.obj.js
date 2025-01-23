@@ -68,6 +68,7 @@ module.exports = {
 		}
 		//获取所有满足抽奖的用户者
 		let userList = await getUserListAll(pushId)
+		userList = [...new Set(userList)]
 		let tempUserList =[...userList]
 		if(!isRepeat){
 			let {data}=await db.collection("push-award-user").where({push_id:pushId}).field({award_user_id:true}).get()

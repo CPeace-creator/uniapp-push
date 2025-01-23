@@ -95,4 +95,14 @@ export default class DBUtils {
 			throw e;
 		}
 	}
+	async count({query}){
+		console.log(query);
+		try{
+			const res = await this.db.collection(this.tableName).where({query}).count();
+			return res;
+		}catch (e) {
+			console.error('查询数据失败：', e);
+			throw e;
+		}
+	}
 }

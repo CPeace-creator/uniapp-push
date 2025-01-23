@@ -246,6 +246,14 @@
 			})
 			try{
 				let pushData = new DBUtils("push-join-user")
+				let {result:{total}} = await pushData.count({
+				    query: `push_id:'${id.value}',award_user_id:'${store.userInfo._id}'`
+				});
+				if(total){
+					showToast({title:"已经参与过了不可重复参与!"})
+					getDetial()
+					return 
+				}
 				let {result:{errCode}}= await pushData.add({push_id:id.value,award_user_id:store.userInfo._id})
 				if(errCode==0) uni.showToast({
 					title:"参与成功"

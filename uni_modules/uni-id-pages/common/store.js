@@ -129,7 +129,7 @@ export const mutations = {
 			delta
 		})
 	},
-	loginSuccess(e = {}){
+	async loginSuccess(e = {}){
 		const {
 			showToast = true, toastText = '登录成功', autoBack = true, uniIdRedirectUrl = '', passwordConfirmed
 		} = e
@@ -142,7 +142,7 @@ export const mutations = {
 			});
 		}
     // 异步调用（更新用户信息）防止获取头像等操作阻塞页面返回
-		this.updateUserInfo()
+		await this.updateUserInfo()
 
 		uni.$emit('uni-id-pages-login-success')
 
