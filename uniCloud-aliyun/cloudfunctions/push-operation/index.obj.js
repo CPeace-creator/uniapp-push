@@ -81,6 +81,7 @@ module.exports = {
 		if(formData){
 			//满足条件用户内随机前端传过来的number
 			let award_user= getRandomElements(tempUserList,formData.number)
+			let not_award_user = userList.filter(item=>!award_user.includes(item))
 			//将新用户放到保存中奖纪录表中 push-award-user
 			let addArr= award_user.map(item=>{
 				return {
@@ -94,8 +95,19 @@ module.exports = {
 			})
 			db.collection("push-award-user").add(addArr)
 			updateData.operLogs=dbCmd.push([formData])
+			uniPush().sendMessage({
+					user_id:award_user,
+					title:"抽奖结果",
+					content:"恭喜中奖",
+					payload:payload
+			})
+			uniPush().sendMessage({
+					user_id:not_award_user,
+					title:"抽奖结果",
+					content:"没有中奖",
+					payload:payload
+			})
 		}else{
-			console.log("参加人员",userList);
 			//状态由1-2 点击参与->停止
 			//全员通知抽奖开始
 			uniPush().sendMessage({

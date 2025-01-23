@@ -257,6 +257,18 @@
 uni.onPushMessage(res=>{
 	console.log("推送消息",res)
 	detial.value.active_state=res.data.payload.active_state
+	//活动开始
+	if(detial.value.active_state==2){
+		resultPopup.value.close()
+		runPopup.value.open()
+		return
+	}
+	//活动停止
+	if(detial.value.active_state==1){
+		runPopup.value.close()
+		resultPopup.value.open()
+		return
+	}
 }) 
 </script>
 
