@@ -121,6 +121,7 @@ module.exports = {
 					}
 			})
 		}else{
+			if(reset) payload.reset=true
 			//状态由1-2 点击参与->停止
 			//全员通知抽奖开始
 			uniPush().sendMessage({

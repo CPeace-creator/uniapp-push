@@ -172,6 +172,7 @@
 		"resToLogin": true
 	},
 	"usingComponents": {
-	    "z-paging": "uni_modules/z-paging/components/z-paging/z-paging"
+	    "z-paging": "uni_modules/z-paging/components/z-paging/z-paging",
+		"uni-load-more":"uni_modules/uni-load-more/components/uni-load-more/uni-load-more"
 	  }
 }

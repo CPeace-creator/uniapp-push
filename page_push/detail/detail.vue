@@ -114,7 +114,7 @@
 	<uni-popup :is-mask-click="false" ref="runPopup" mask-background-color="rgba(0,0,0,0.8)">
 		<view class="runPopup">
 			<view class="turntable">
-				<image src="https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/turntable-rotate.png"
+				<image src="https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/turntable-rotate.png"
 					mode="aspectFill"></image>
 			</view>
 		</view>
@@ -224,7 +224,7 @@
 			return {
 				...item,
 				picUrl: item.picUrl ? item.picUrl + "?x-oss-process=iamge/resize,w_120,m_lfit" :
-					"https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/prizePic.webp"
+					"https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/prizePic.webp"
 			}
 		})
 		if (res.result.errCode == 0) {
@@ -268,6 +268,7 @@ uni.onPushMessage(res=>{
 	}
 	//活动停止
 	if(detial.value.active_state==1){
+		if(res.data.payLoad?.reset) return runPopup.value.close()
 		detial.value.result=res.data.payload.result
 		runPopup.value.close()
 		resultPopup.value.open()
@@ -283,7 +284,7 @@ uni.onPushMessage(res=>{
 
 		.main {
 			height: 1566rpx;
-			background: url("https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/raffleBg.webp") no-repeat center top;
+			background: url("https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/raffleBg.webp") no-repeat center top;
 			background-size: contain;
 			position: relative;
 
@@ -430,7 +431,7 @@ uni.onPushMessage(res=>{
 
 		.body {
 			min-height: 200rpx;
-			background: url("https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/raffle-repeat.jpg") repeat-y center;
+			background: url("https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/raffle-repeat.jpg") repeat-y center;
 			background-size: contain;
 			padding: 0 70rpx;
 
@@ -503,7 +504,7 @@ uni.onPushMessage(res=>{
 
 		.footer {
 			min-height: 200rpx;
-			background: url("https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/raffle-footer.jpg") no-repeat center top;
+			background: url("https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/raffle-footer.jpg") no-repeat center top;
 			background-size: contain;
 
 			.copyright {
@@ -599,7 +600,7 @@ uni.onPushMessage(res=>{
 	.runPopup {
 		width: 744rpx;
 		height: 1016rpx;
-		background: url('https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/turntable.png');
+		background: url('https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/turntable.png');
 		background-size: contain;
 		position: relative;
 
@@ -633,7 +634,7 @@ uni.onPushMessage(res=>{
 		.win {
 			width: 750rpx;
 			height: 855rpx;
-			background-image: url('https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/win.png');
+			background-image: url('https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/win.png');
 
 			.text {
 				height: 120rpx;
@@ -659,7 +660,7 @@ uni.onPushMessage(res=>{
 		.loser {
 			width: 561rpx;
 			height: 528rpx;
-			background-image: url('https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/loser.png');
+			background-image: url('https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/loser.png');
 		}
 
 		.close {

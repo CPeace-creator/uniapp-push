@@ -77,7 +77,7 @@ const detail=ref({})
 //抽奖个数
 const maxNumber=ref(0)
 //使用云对象
-const pushCloudObj = uniCloud.importObject("push-operation")
+const pushCloudObj = uniCloud.importObject("push-operation",{customUI:true})
 //下拉框选择事件
 const selectChange=(e)=>{
 	formData.value.number=0
@@ -116,19 +116,23 @@ const getDetail=async ()=>{
 
 //点击抽奖
 const handlePush=async ()=>{
+	uni.showLoading({mask:true})
 	if(detail.value.active_state==1){
 		if(!formData.value.aid) return showToast({title:"抽奖选项未选择"})
 		if(formData.value.number==0) return showToast({title:"抽奖数量不能为0"})
 		let res =await pushCloudObj.update({pushId:id.value,active_state:2})
 		if(res.code==400) return showToast({title:res.msg})
 		detail.value.active_state=2
+		uni.hideLoading()
 		return
 	}
 	if(detail.value.active_state==2){
+		if(!formData.value.aid || formData.value.number<0) return showToast({title:"奖项或数量不能为空"})
 		formData.value.create_date=Date.now()
 		console.log(formData.value);
 		let res =await pushCloudObj.update({pushId:id.value,active_state:1,formData:formData.value})
 		getDetail()
+		uni.hideLoading()
 		return
 	}
 	if(detail.value.active_state==3){

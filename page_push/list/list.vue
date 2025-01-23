@@ -47,9 +47,9 @@
 			orderBy: "create_time desc"
 		})
 		if (res.errCode == 0) {
-			paging.value.complete(res.data);
+			paging?.value.complete(res.data);
 		} else {
-			paging.value.complete([]);
+			paging?.value.complete([]);
 		}
 	}
 	const goDetail = () => {

@@ -7,7 +7,7 @@
 			<uni-list border-full v-if="dataList.length">
 				<uni-list-item :title="`${item.userInfo.nickname}`" thumb-size="lg" :note="`参与时间${dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss')}`"
 				v-for="(item,index) in dataList" :key="item.id"
-				thumb="https://mp-7272236e-a94b-4451-b300-3dc88bca7bf7.cdn.bspapp.com/project/defAvatar.jpg"></uni-list-item>
+				thumb="https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/defAvatar.jpg"></uni-list-item>
 			</uni-list>
 		</z-paging>
 	</view>
