@@ -12,7 +12,7 @@
 				</view>
 				<view class="userInfo" @click="handleUserInfo">
 					<view class="avatar">
-						<image :src="store.userInfo.avatar_file?store.userInfo.avatar_file.url+'x-oss-process=iamge/resize,w_120,m_lfit':'../../static/defAvatar.jpg'" mode="aspectFill"></image>
+						<cloud-image :src="store.userInfo.avatar_file?store.userInfo.avatar_file.url:'../../static/defAvatar.jpg'"></cloud-image>
 					</view>
 					<view class="name">{{store.hasLogin?store.userInfo.nickname:"点击登录"}}</view>
 				</view>
@@ -169,6 +169,7 @@
 	}
 	const id=ref(null)
 	onLoad((e) => {
+		console.log(store);
 		id.value=e.id
 		getDetial()
 	})
@@ -303,7 +304,7 @@ uni.onPushMessage(res=>{
 			position: relative;
 
 			.titleBar {
-				border: 1px solid green;
+				// border: 1px solid green;
 				align-items: center;
 				display: flex;
 				width: fit-content;
@@ -333,16 +334,14 @@ uni.onPushMessage(res=>{
 					margin-left: 30rpx;
 
 					.avatar {
-						height: 80%;
-						width: 100rpx;
-						border-radius: 50%;
-						overflow: hidden;
-						border: 2px solid #fff;
-
-						image {
-							height: 100%;
-							width: 100%;
-						}
+					    display: flex;
+					    justify-content: center;
+					    align-items: center;
+					    height: 100rpx;
+					    width: 100rpx;
+					    border-radius: 50%;
+					    overflow: hidden;
+					    border: 2px solid #fff;
 					}
 
 					.name {
