@@ -34,7 +34,7 @@
 			</view>
 			<view class="content">
 				<uni-list>
-					<uni-list-item v-for="(item,index) in detail.operLogs" :key="item" :to="`./list`"
+					<uni-list-item v-for="(item,index) in detail.operLogs" :key="item" :to="`./list?pushId=${detail._id}&orderID=${item.id}`"
 					:note="`${item.name} - ${item.number}人`" clickable="true" showArrow :title="`第${index+1}轮开奖`"  :right-text="dayjs(item.create_date).format('YYYY-MM-DD HH:mm:ss')"></uni-list-item>
 				</uni-list>
 			</view>

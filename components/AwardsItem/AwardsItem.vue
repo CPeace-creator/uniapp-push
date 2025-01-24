@@ -1,28 +1,28 @@
 <template>
 	<view class="awardsItem">
 		<view class="userInfo">
-			<image  class="pic" src="../../static/logo.jpg" mode="aspectFill"></image>
+			<image  class="pic" :src="item.award_userInfo?item.award_userInfo.avatar_file.url:'../../static/logo.jpg'" mode="aspectFill"></image>
 			<view class="text">
-				湘江中路
+				{{item.award_userInfo.nickname}}
 			</view>	
 		</view>
 		<view class="body">
 			<view class="left">
-				<image class="pic" src="../../static/logo.jpg" mode="aspectFill"></image>
+				<image class="pic" :src="item.award_pic" mode="aspectFill" @click="clickAwardPic"></image>
 			</view>
 			<view class="right">
 				<view class="title">
-					一等奖
+					{{item.award_name}}
 				</view>
 				<view class="info">
 					<view class="line">
-						发品:IPhone手机
+						奖品:{{item.award_des}}
 					</view>
 					<view class="line">
-						轮次:第三轮中奖
+						轮次:第{{item.order_number}}轮中奖
 					</view>
 					<view class="line">
-						时间:2025-01-13 12:00:00
+						时间:{{dayjs(item.create_date).format('YYYY-MM-DD HH:mm:ss')}}
 					</view>
 					<view class="line">
 						<button type="primary" size="mini" v-if="writeOff" @click="onWriteOff">手动核销</button>
@@ -38,7 +38,8 @@
 </template>
 
 <script setup>
-defineProps({
+import dayjs from 'dayjs';
+const props=defineProps({
 	writeOff:{
 		type:Boolean,
 		default:false
@@ -51,12 +52,22 @@ defineProps({
 		type:Boolean,
 		default:false
 	},
+	item:{
+		type:Object,
+		default:{}
+	}
 })
  const onWriteOff=()=>{
 	 
  }
  const onCode=()=>{
 	 
+ }
+ const clickAwardPic = () => {
+ 	let urls = [props.item.award_pic.split("?")[0]]
+ 	uni.previewImage({
+ 		urls
+ 	})
  }
 </script>
 
