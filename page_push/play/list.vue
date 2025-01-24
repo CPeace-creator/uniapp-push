@@ -4,7 +4,7 @@
 			<template #loading><uni-load-more status="loading"></uni-load-more></template>
 			<view class="list">
 				<view class="row" v-for="(item,index) in dataList" :key="index">
-					<AwardsItem :writeOff="true" :item="item"></AwardsItem>
+					<AwardsItem :writeOff="true" :item="item" @success="statusSuccess"></AwardsItem>
 				</view>
 			</view>
 		</z-paging>
@@ -32,7 +32,6 @@ const queryList=async (pageNo,pageSize)=>{
 		`_id,avatar_file,nickname`
 	).getTemp()
 	let {result:{data,errCode:errCode2}={}} = await db.collection(awardTmp,userTmp).field("_id,push_id,award_id,order_id,status,create_date,arrayElemAt(award_user_id,0) as award_userInfo").get()
-	console.log(data);
 	data=data.map(item=>{
 		let find =awardsList.find(i=>i.id=item.award_id)
 		let orderIndex = operLogs.findIndex(oIndex=>oIndex.id=item.order_id)
@@ -60,6 +59,11 @@ const scanCode = ()=>{
 			console.log(err);
 		}
 	})
+}
+
+//修改状态成功
+const statusSuccess=()=>{
+	paging.value.refresh()
 }
 </script>
 

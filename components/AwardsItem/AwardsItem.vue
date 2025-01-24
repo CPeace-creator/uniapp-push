@@ -25,8 +25,8 @@
 						时间:{{dayjs(item.create_date).format('YYYY-MM-DD HH:mm:ss')}}
 					</view>
 					<view class="line">
-						<button type="primary" size="mini" v-if="writeOff" @click="onWriteOff">手动核销</button>
-						<button type="primary" size="mini" v-if="code" @click="onCode">兑换码</button>
+						<button type="primary" size="mini" v-if="writeOff" @click="onWriteOff" :disabled="item.status==1">手动核销</button>
+						<button type="primary" size="mini" v-if="code" @click="onCode" :disabled="item.status==1">兑换码</button>
 					</view>
 				</view>
 			</view>
@@ -39,6 +39,9 @@
 
 <script setup>
 import dayjs from 'dayjs';
+import { showToast } from '../../utils/utils';
+const emits=defineEmits(['success'])
+const db=uniCloud.database()
 const props=defineProps({
 	writeOff:{
 		type:Boolean,
@@ -57,8 +60,28 @@ const props=defineProps({
 		default:{}
 	}
 })
- const onWriteOff=()=>{
-	 
+
+//点击核销
+const onWriteOff=async()=>{
+	 let res= await uni.showModal({
+	 	title:"核销中",
+		content:"是否确认核销该中奖信息"
+	 })
+	 if(!res.confirm) return;
+	 try{
+		 uni.showLoading({
+		 	title:"操作中",mask:true
+		 })
+		 let {result:{errCode}}=await db.collection("push-award-user").doc(props.item._id).update({
+		 		 status:1
+		 })
+		 if(errCode!=0) return showToast({title:"操作有误请重新操作"})
+		 emits("success")
+	 }catch(err){
+		 showToast({title:err})
+	 }finally{
+		 uni.hideLoading()
+	 }
  }
  const onCode=()=>{
 	 
