@@ -88,7 +88,7 @@
 					<uni-icons type="gift-filled" size="30"></uni-icons>
 					<view class="text">中奖纪录</view>
 				</view>
-				<view class="item" hover-class="hoverItem">
+				<view class="item" hover-class="hoverItem" @click="shareQRCode">
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">分享抽奖</view>
 				</view>
@@ -140,158 +140,159 @@
 </template>
 
 <script setup>
-	import {
-		ref
-	} from 'vue'
-	import {
-		getStatusBarHeight,
-		getTitleBarHeight,
-		goBack,
-		routeTo,
-		showToast
-	} from '../../utils/utils';
-	import DBUtils from '../../utils/dbUtils';
-	import {
-		onLoad
-	} from '@dcloudio/uni-app'
-	import {
-		store
-	} from '@/uni_modules/uni-id-pages/common/store.js'
-	const menuState = ref(true)
-	const pageRoute = ref(getCurrentPages())
-	const resultPopup = ref(null)
-	const clickAwardPic = (index) => {
-		let urls = detial.value.awardsList.map(item => item.picUrl.split("?")[0])
-		uni.previewImage({
-			urls,
-			current: index
-		})
-	}
-	const id=ref(null)
-	onLoad((e) => {
-		console.log(store);
-		id.value=e.id
-		getDetial()
+import {
+	ref
+} from 'vue'
+import {
+	getStatusBarHeight,
+	getTitleBarHeight,
+	goBack,
+	routeTo,
+	showToast
+} from '../../utils/utils';
+import DBUtils from '../../utils/dbUtils';
+import {
+	onLoad
+} from '@dcloudio/uni-app'
+import {
+	store
+} from '@/uni_modules/uni-id-pages/common/store.js'
+const menuState = ref(true)
+const pageRoute = ref(getCurrentPages())
+const resultPopup = ref(null)
+const clickAwardPic = (index) => {
+	let urls = detial.value.awardsList.map(item => item.picUrl.split("?")[0])
+	uni.previewImage({
+		urls,
+		current: index
 	})
-	const menuChange = () => {
-		menuState.value = !menuState.value
-	}
-	const runPopup = ref(null)
+}
+const id=ref(null)
+onLoad((e) => {
+	console.log(store);
+	id.value=e.id
+	getDetial()
+})
+const menuChange = () => {
+	menuState.value = !menuState.value
+}
+const runPopup = ref(null)
 
-	const closeResultPopup = () => {
-		resultPopup.value.close()
-	}
-	const detial = ref(null)
-	const db = uniCloud.database()
-	const dbCmd = db.command
-	const $ = dbCmd.aggregate
-	//获取列表详情
-	const getDetial = async () => {
-		let res =await db.collection("push-data").aggregate()
-		.match({_id:id.value})
+const closeResultPopup = () => {
+	resultPopup.value.close()
+}
+const detial = ref(null)
+const db = uniCloud.database()
+const dbCmd = db.command
+const $ = dbCmd.aggregate
+const QRCodeObj=uniCloud.importObject("QRCode")
+//获取列表详情
+const getDetial = async () => {
+	let res =await db.collection("push-data").aggregate()
+	.match({_id:id.value})
+	.lookup({
+		from:"push-join-user",
+			let:{pushID:"$_id"},
+			pipeline:$.pipeline().match(
+				dbCmd.expr($.and([
+					$.eq(["$$pushID","$push_id"]),
+					$.eq(["$award_user_id",store.userInfo._id])
+				]))
+			).count("length")
+			.done(),
+			as:"joinState"
+		}).lookup({
+		from:"push-join-user",
+			let:{pushID:"$_id"},
+			pipeline:$.pipeline().match(
+				dbCmd.expr($.and([
+					$.eq(["$$pushID","$push_id"])
+				]))
+			).project({award_user_id:true}).sort({_id:-1}).limit(30)
+			.done(),
+			as:"joinUsers"
+		}).addFields({userList:$.map({input:"$joinUsers",in:"$$this.award_user_id"})})
 		.lookup({
-			from:"push-join-user",
-				let:{pushID:"$_id"},
-				pipeline:$.pipeline().match(
+			from:"uni-id-users",
+				let:{userList:"$userList"},
+				pipeline:$.pipeline().project({avatar_file:true}).match(
 					dbCmd.expr($.and([
-						$.eq(["$$pushID","$push_id"]),
-						$.eq(["$award_user_id",store.userInfo._id])
+						$.in(["$_id","$$userList"])
 					]))
-				).count("length")
+				).match({avatar_file:$.neq(null)}).sort({_id:-1}).limit(30)
 				.done(),
-				as:"joinState"
-			}).lookup({
-			from:"push-join-user",
-				let:{pushID:"$_id"},
-				pipeline:$.pipeline().match(
-					dbCmd.expr($.and([
-						$.eq(["$$pushID","$push_id"])
-					]))
-				).project({award_user_id:true}).sort({_id:-1}).limit(30)
-				.done(),
-				as:"joinUsers"
-			}).addFields({userList:$.map({input:"$joinUsers",in:"$$this.award_user_id"})})
-			.lookup({
-				from:"uni-id-users",
-					let:{userList:"$userList"},
-					pipeline:$.pipeline().project({avatar_file:true}).match(
-						dbCmd.expr($.and([
-							$.in(["$_id","$$userList"])
-						]))
-					).match({avatar_file:$.neq(null)}).sort({_id:-1}).limit(30)
-					.done(),
-					as:"avatars"
-				})
-			.project({
-				avatars:$.map({
-					input:"$avatars",
-					in:"$$this.avatar_file.url"
-				}),
-				isJoin:$.cond(
-					{if:$.gt([$.arrayElemAt(['$joinState.length',0]),0]),
-					then:true,
-					else:false}
-				),
-				active_state:true,
-				awardsList:true,
-				create_date:true,
-				join_count:true,
-				ruleText:true,
-				user_id:true,
-				_id:true
-			}).end();
-		// let pushData = new DBUtils("push-data")
-		// let res = await pushData.query({
-		// 	query: `_id=="${id}"`,
-		// 	orderBy: "create_date desc"
-		// })
-		console.log(res);
-		res.result.data[0].awardsList = res.result.data[0].awardsList.map(item => {
-			//?x-oss-process=iamge/resize,w_120,m_lfit使用阿里云图片压缩
-			return {
-				...item,
-				picUrl: item.picUrl ? item.picUrl + "?x-oss-process=iamge/resize,w_120,m_lfit" :
-					"https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/prizePic.webp"
-			}
-		})
-		if (res.result.errCode == 0) {
-			detial.value = res.result.data[0]
+				as:"avatars"
+			})
+		.project({
+			avatars:$.map({
+				input:"$avatars",
+				in:"$$this.avatar_file.url"
+			}),
+			isJoin:$.cond(
+				{if:$.gt([$.arrayElemAt(['$joinState.length',0]),0]),
+				then:true,
+				else:false}
+			),
+			active_state:true,
+			awardsList:true,
+			create_date:true,
+			join_count:true,
+			ruleText:true,
+			user_id:true,
+			_id:true
+		}).end();
+	// let pushData = new DBUtils("push-data")
+	// let res = await pushData.query({
+	// 	query: `_id=="${id}"`,
+	// 	orderBy: "create_date desc"
+	// })
+	console.log(res);
+	res.result.data[0].awardsList = res.result.data[0].awardsList.map(item => {
+		//?x-oss-process=iamge/resize,w_120,m_lfit使用阿里云图片压缩
+		return {
+			...item,
+			picUrl: item.picUrl ? item.picUrl + "?x-oss-process=iamge/resize,w_120,m_lfit" :
+				"https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/prizePic.webp"
 		}
+	})
+	if (res.result.errCode == 0) {
+		detial.value = res.result.data[0]
 	}
-	const handleUserInfo = () => {
-		if (!store.hasLogin) return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
-		routeTo("/uni_modules/uni-id-pages/pages/userinfo/userinfo")
+}
+const handleUserInfo = () => {
+	if (!store.hasLogin) return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
+	routeTo("/uni_modules/uni-id-pages/pages/userinfo/userinfo")
+}
+
+//点击参与
+const handleJoin=async()=>{
+	if (!store.hasLogin) {
+		return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
+	}else{
+		uni.showToast({
+			title:"请稍后",mask:true
+		})
+		try{
+			let pushData = new DBUtils("push-join-user")
+			let {result:{total}} = await pushData.count({
+				query: `push_id:'${id.value}',award_user_id:'${store.userInfo._id}'`
+			});
+			if(total){
+				showToast({title:"已经参与过了不可重复参与!"})
+				getDetial()
+				return 
+			}
+			let {result:{errCode}}= await pushData.add({push_id:id.value,award_user_id:store.userInfo._id})
+			if(errCode==0) uni.showToast({
+				title:"参与成功"
+			})
+			getDetial()
+		}catch(err){
+			showToast({title:err})
+		}
 	}
 	
-	//点击参与
-	const handleJoin=async()=>{
-		if (!store.hasLogin) {
-			return routeTo("/uni_modules/uni-id-pages/pages/login/login-withoutpwd")
-		}else{
-			uni.showToast({
-				title:"请稍后",mask:true
-			})
-			try{
-				let pushData = new DBUtils("push-join-user")
-				let {result:{total}} = await pushData.count({
-				    query: `push_id:'${id.value}',award_user_id:'${store.userInfo._id}'`
-				});
-				if(total){
-					showToast({title:"已经参与过了不可重复参与!"})
-					getDetial()
-					return 
-				}
-				let {result:{errCode}}= await pushData.add({push_id:id.value,award_user_id:store.userInfo._id})
-				if(errCode==0) uni.showToast({
-					title:"参与成功"
-				})
-				getDetial()
-			}catch(err){
-				showToast({title:err})
-			}
-		}
-		
-	}
+}
 uni.onPushMessage(res=>{
 	console.log("推送消息",res)
 	if(res.data.payload.type=='push'){
@@ -317,6 +318,14 @@ uni.onPushMessage(res=>{
 	}
 	
 }) 
+//分享抽奖
+const imgPic=ref(null)
+const shareQRCode=()=>{
+	QRCodeObj.getUnlimited().then(res=>{
+		console.log(res);
+		imgPic.value=res
+	})
+}
 </script>
 
 <style scoped lang="scss">
