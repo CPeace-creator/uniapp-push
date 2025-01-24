@@ -143,6 +143,8 @@ module.exports = {
 		userList = [...new Set(userList)]
 		console.log("用户信息",userList);
 		let {data:[{join_count}]}=await db.collection("push-data").where({_id:push_id}).field({join_count:true}).get()
+		let {data} =await db.collection("uni-id-users").where({_id:dbCmd.in(userList),avatar_file:dbCmd.neq(null)}).field({avatar_file:true,nickname:true}).orderBy("register_date","desc").get()
+		let avatars=data.map(item=>item.avatar_file.url)
 		uniPush().sendMessage({
 				user_id:userList,
 				title:"实时参与人数统计",
@@ -150,6 +152,7 @@ module.exports = {
 				payload:{
 					time:Date.now(),
 					join_count:join_count,
+					avatars,
 					type:"joinUser"
 				}
 		})

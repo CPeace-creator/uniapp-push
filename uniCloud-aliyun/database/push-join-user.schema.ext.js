@@ -10,7 +10,7 @@ module.exports = {
 		addDataList
     } = {}) {
 		let [{push_id}]=addDataList
-		db.collection("push-data").doc(push_id).update({
+		await db.collection("push-data").doc(push_id).update({
 			join_count:dbCmd.inc(1)
 		})
 		pushCloudObj.joinUserSend({push_id})

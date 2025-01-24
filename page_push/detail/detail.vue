@@ -12,7 +12,7 @@
 				</view>
 				<view class="userInfo" @click="handleUserInfo">
 					<view class="avatar">
-						<cloud-image :src="store.userInfo.avatar_file?store.userInfo.avatar_file.url:'../../static/defAvatar.jpg'"></cloud-image>
+						<cloud-image :src="store.userInfo.avatar_file?store.userInfo.avatar_file.url:'https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/defAvatar.jpg'"></cloud-image>
 					</view>
 					<view class="name">{{store.hasLogin?store.userInfo.nickname:"点击登录"}}</view>
 				</view>
@@ -39,9 +39,9 @@
 				<view class="text">
 					已有<text class="" big>{{detial?.join_count}}</text>人参与
 				</view>
-				<view class="group">
-					<view class="pic" v-for="(item,index) in 6" :key="index" :style="{zIndex:6-index}">
-						<image src="../../static/logo.jpg" mode="aspectFill"></image>
+				<view class="group" v-if="detial.avatars">
+					<view class="pic" v-for="(item,index) in detial.avatars" :key="index" :style="{zIndex:6-index}">
+						<image :src="item" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
@@ -287,6 +287,7 @@ uni.onPushMessage(res=>{
 	}
 	if(res.data.payload.type=='joinUser'){
 		detial.value.join_count = res.data.payload.join_count
+		detial.value.avatars=res.data.payload.avatars
 	}
 	
 }) 
