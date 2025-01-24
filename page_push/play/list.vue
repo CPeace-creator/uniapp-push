@@ -35,13 +35,12 @@ const queryList=async (pageNo,pageSize)=>{
 	console.log(data);
 	data=data.map(item=>{
 		let find =awardsList.find(i=>i.id=item.award_id)
-		console.log(find);
 		let orderIndex = operLogs.findIndex(oIndex=>oIndex.id=item.order_id)
 		return {
 			...item,
 			award_des:find.description,
 			award_name:find.name,
-			award_pic:find.picUrl?find.picUrl+"x-oss-process=iamge/resize,w_120,m_lfit":"https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/prizePic.webp",
+			award_pic:find.picUrl?find.picUrl+"?x-oss-process=iamge/resize,w_120,m_lfit":"https://mp-a1a93688-107c-418f-b039-e17908539fce.cdn.bspapp.com/push-project/prizePic.webp",
 			order_number:orderIndex+1
 		}
 	})
