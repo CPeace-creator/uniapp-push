@@ -200,7 +200,33 @@
 				).count("length")
 				.done(),
 				as:"joinState"
-			}).project({
+			}).lookup({
+			from:"push-join-user",
+				let:{pushID:"$_id"},
+				pipeline:$.pipeline().match(
+					dbCmd.expr($.and([
+						$.eq(["$$pushID","$push_id"])
+					]))
+				).project({award_user_id:true}).sort({_id:-1}).limit(30)
+				.done(),
+				as:"joinUsers"
+			}).addFields({userList:$.map({input:"$joinUsers",in:"$$this.award_user_id"})})
+			.lookup({
+				from:"uni-id-users",
+					let:{userList:"$userList"},
+					pipeline:$.pipeline().project({avatar_file:true}).match(
+						dbCmd.expr($.and([
+							$.in(["$_id","$$userList"])
+						]))
+					).match({avatar_file:$.neq(null)}).sort({_id:-1}).limit(30)
+					.done(),
+					as:"avatars"
+				})
+			.project({
+				avatars:$.map({
+					input:"$avatars",
+					in:"$$this.avatar_file.url"
+				}),
 				isJoin:$.cond(
 					{if:$.gt([$.arrayElemAt(['$joinState.length',0]),0]),
 					then:true,
