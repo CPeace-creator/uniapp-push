@@ -104,7 +104,8 @@
 					<uni-icons type="paperplane-filled" size="30"></uni-icons>
 					<view class="text">抽奖管理</view>
 				</view>
-				<view v-if="detial?.user_id==store.userInfo._id" class="item" hover-class="hoverItem">
+				<view v-if="detial?.user_id==store.userInfo._id" class="item" hover-class="hoverItem"
+				@click="scanCode(id)">
 					<uni-icons type="scan" size="30"></uni-icons>
 					<view class="text">扫码核销</view>
 				</view>
@@ -153,7 +154,7 @@
 		getTitleBarHeight,
 		goBack,
 		routeTo,
-		showToast
+		showToast,scanCode
 	} from '../../utils/utils';
 	import DBUtils from '../../utils/dbUtils';
 	import {

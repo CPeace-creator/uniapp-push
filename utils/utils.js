@@ -3,6 +3,7 @@ import {
 	getFileExtension
 } from './tools';
 import dayjs from 'dayjs';
+const db=uniCloud.database()
 const SYSTEM_INFO = uni.getSystemInfoSync();
 
 export const getStatusBarHeight = () => SYSTEM_INFO.statusBarHeight || 15;
@@ -122,4 +123,26 @@ export const getActiveState = (active) => {
 			return "已结束";
 			break;
 	}
+}
+
+//扫码核销
+export const scanCode = (pushId)=>{
+	uni.scanCode({
+		success: async (res) => {
+		let [path,params] = res.path.split("?")
+		console.log(path,params);
+		let [,award_id]=params.split("=")
+		if(path!='page_push/play/confirm') return showToast({title:"小程序码参数有误"})
+		let {result:{data:[detail]}} = await db.collection("push-award-user").doc(award_id).field("push_id").get()
+		if(detail.push_id!=pushId){
+			return showToast({title:'此码无法核销'})
+		}
+		uni.navigateTo({
+			url:'/'+path+"?id="+award_id+"&pushId="+pushId
+		})
+		},
+		fail:(err)=>{
+			console.log(err);
+		}
+	})
 }

@@ -75,6 +75,11 @@ const onWriteOff=async()=>{
 		 uni.showLoading({
 		 	title:"操作中",mask:true
 		 })
+		 let {result:{data:[detail]}}= await db.collection('push-data').doc(props.item.push_id)
+		 .field("user_id").get()
+		 if(detail.user_id!=uniCloud.getCurrentUserInfo().uid){
+			 return showToast({title:'不是活动创建者,没有权限核销!'})
+		 }
 		 let {result:{errCode}}=await db.collection("push-award-user").doc(props.item._id).update({
 		 		 status:1
 		 })

@@ -8,7 +8,7 @@
 				</view>
 			</view>
 		</z-paging>
-		<uni-fab ref="fab" :pattern="{icon:'scan'}" :content="content" horizontal="right" vertical="bottom" @fabClick="scanCode"></uni-fab>
+		<uni-fab ref="fab" :pattern="{icon:'scan'}" :content="content" horizontal="right" vertical="bottom" @fabClick="scanCode(pushId)"></uni-fab>
 	</view>
 </template>
 
@@ -17,14 +17,17 @@ import {ref} from 'vue'
 import {
 		onLoad,onUnload
 	} from '@dcloudio/uni-app'
-import { showToast } from '../../utils/utils'
+import { showToast,scanCode} from '../../utils/utils'
 const paging=ref(null)
 const dataList=ref([])
 const db=uniCloud.database()
 const queryList=async (pageNo,pageSize)=>{
 	let skip = (pageNo-1)*pageSize
-	let {result:{data:[{awardsList,operLogs}={}]=[],errCode=400}={}}=await await db.collection("push-data").doc(pushId).field(`awardsList,operLogs`).get()
+	let {result:{data:[{awardsList,operLogs,award_user_id}={}]=[],errCode=400}={}}=await await db.collection("push-data").doc(pushId).field(`awardsList,operLogs`).get()
 	if(errCode!=0) return paging.value.complete(false)
+	if(award_user_id!=uniCloud.getCurrentUserInfo().uid){
+		return paging.value.complete(false)
+	}
 	let awardTmp=await db.collection("push-award-user").where({
 		push_id:pushId,
 		order_id:orderID
@@ -50,26 +53,7 @@ let pushId,orderID
 onLoad((e)=>{
 	({pushId,orderID}=e)
 })
-const scanCode = ()=>{
-	uni.scanCode({
-		success: async (res) => {
-		let [path,params] = res.path.split("?")
-		console.log(path,params);
-		let [,award_id]=params.split("=")
-		if(path!='page_push/play/confirm') return showToast({title:"小程序码参数有误"})
-		let {result:{data:[detail]}} = await db.collection("push-award-user").doc(award_id).field("push_id").get()
-		if(detail.push_id!=pushId){
-			return showToast({title:'此码无法核销'})
-		}
-		uni.navigateTo({
-			url:'/'+path+"?id="+award_id+"&pushId="+pushId
-		})
-		},
-		fail:(err)=>{
-			console.log(err);
-		}
-	})
-}
+
 
 //修改状态成功
 const statusSuccess=()=>{
