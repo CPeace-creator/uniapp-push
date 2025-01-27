@@ -117,6 +117,7 @@ const getDetail=async ()=>{
 //点击抽奖
 const handlePush=async ()=>{
 	uni.showLoading({mask:true})
+	if(dayjs().isAfter(detail.value.endTime)) return showToast({title:"活动已结束了,请返回页面"})
 	if(detail.value.active_state==1){
 		if(!formData.value.aid) return showToast({title:"抽奖选项未选择"})
 		if(formData.value.number==0) return showToast({title:"抽奖数量不能为0"})

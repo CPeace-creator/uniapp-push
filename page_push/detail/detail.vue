@@ -19,7 +19,7 @@
 				</view>
 			</view>
 			<view class="statusGroup">
-				<template v-if="!detial?.isJoin">
+				<template v-if="!detial?.isJoin && detial.active_state!=3">
 					<view class="add btn" @click="handleJoin">
 						<text>点击\n参与</text>
 					</view>

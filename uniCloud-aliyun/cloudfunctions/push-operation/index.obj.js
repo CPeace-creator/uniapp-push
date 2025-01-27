@@ -1,6 +1,9 @@
 const db =uniCloud.database()
 const dbCmd = db.command
 const uniID=require("uni-id-common")
+const dayjs=require('dayjs')
+//设置时区偏移量
+const offset=new Date().getTimezoneOffset()===0?8:0
 function uniPush(){
 	return  uniCloud.getPushManager({appId:"__UNI__D5ADB49"})
 }
@@ -155,6 +158,26 @@ module.exports = {
 					avatars,
 					type:"joinUser"
 				}
+		})
+	},
+	//定时运行函数
+	async _timing(){
+		let {data} = await db.collection('push-data').where({
+			active_state:dbCmd.neq(3)
+		}).field({endTime:true,create_date:true,active_state:true}).get()
+		data= data.map(item=>{
+			return {
+				...item,
+				endTime:item.endTime || dayjs(item.create_date).add(offset,'hours').add(3,'days')
+				.format('YYYY-MM-DD HH:mm:ss')
+			}
+		}).filter(item=>{
+			return dayjs().add(offset,'hours').isAfter(item.endTime)
+		}).map(item=>item._id)
+		let res=await db.collection('push-data').where({
+			_id:dbCmd.in(data)
+		}).update({
+			active_state:3
 		})
 	}
 }
