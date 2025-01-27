@@ -169,10 +169,22 @@ const clickAwardPic = (index) => {
 	})
 }
 const id=ref(null)
-onLoad((e) => {
-	console.log(store);
-	id.value=e.id
-	getDetial()
+onLoad(async (e) => {
+	e.scene?id.value=decodeURIComponent(e.scene):id.value=e.id
+	if(e.id || (e.scene && e.scene!=="0")){
+		id.value=e.id
+		getDetial()
+	}else{
+		let res = await uni.showModal({
+			title:"参数传递错误,请检查",icon:"error",
+			showCancel:false
+		})
+		if(res.confirm){
+			uni.redirectTo({
+				url:"/page_push/list/list"
+			})
+		}
+	}
 })
 const menuChange = () => {
 	menuState.value = !menuState.value
@@ -247,7 +259,18 @@ const getDetial = async () => {
 	// 	query: `_id=="${id}"`,
 	// 	orderBy: "create_date desc"
 	// })
-	console.log(res);
+	if(!res.result.data[0]){
+		let res = await uni.showModal({
+			content:"没有查询到数据,返回首页",
+			showCancel:false
+		})
+		if(res.confirm){
+			uni.redirectTo({
+				url:"/page_push/list/list"
+			})
+			return
+		}
+	}
 	res.result.data[0].awardsList = res.result.data[0].awardsList.map(item => {
 		//?x-oss-process=iamge/resize,w_120,m_lfit使用阿里云图片压缩
 		return {
@@ -323,11 +346,10 @@ uni.onPushMessage(res=>{
 const imgPic=ref(null)
 const shareQRCode=async ()=>{
 	let res= await QRCodeObj.getUnlimited({page:"page_push/detail/detail",
-	scene:"",
+	scene:id.value,
 	check_path:false,
 	auto_color:true})
 	let path = await base64ToPath(res)
-	console.log(path);
 	uni.previewImage({
 		urls:[path]
 	})
