@@ -31,8 +31,8 @@
 				</view>
 			</view>
 		</view>
-		<view class="confirm" v-if="confirm">
-			<button type="primary">确认核销</button>
+		<view class="confirm" v-if="confirm" @click="onWriteOff">
+			<button type="primary" :disabled="item.status==1">确认核销</button>
 		</view>
 	</view>
 </template>
