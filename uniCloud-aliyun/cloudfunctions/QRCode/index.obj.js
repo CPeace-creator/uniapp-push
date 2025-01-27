@@ -17,13 +17,14 @@ module.exports = {
 		
 	},
 	//获取不限制的小程序码
-	async getUnlimited(){
+	async getUnlimited({scene="0",page="pages/index/index",check_path=true,env_version="release",
+	width=430,auto_color=false,line_color={"r":0,"g":0,"b":0},is_hyaline=false}={}){
 		let {data}=await uniCloud.request({
-			url:"https://api.weixin.qq.com/wxa/getwxacodeunlimit",
+			url:"https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+this.accessToken,
 			method:"POST",
 			responseType:'buffer',
 			data:{
-				scene:"0"
+				scene,page,check_path,env_version,width,auto_color,line_color,is_hyaline
 			}
 		})
 		return "data:image/png;base64,"+data.toString('base64');

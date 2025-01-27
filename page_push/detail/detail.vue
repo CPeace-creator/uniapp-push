@@ -157,6 +157,7 @@ import {
 import {
 	store
 } from '@/uni_modules/uni-id-pages/common/store.js'
+import {base64ToPath} from 'image-tools'
 const menuState = ref(true)
 const pageRoute = ref(getCurrentPages())
 const resultPopup = ref(null)
@@ -320,10 +321,15 @@ uni.onPushMessage(res=>{
 }) 
 //分享抽奖
 const imgPic=ref(null)
-const shareQRCode=()=>{
-	QRCodeObj.getUnlimited().then(res=>{
-		console.log(res);
-		imgPic.value=res
+const shareQRCode=async ()=>{
+	let res= await QRCodeObj.getUnlimited({page:"page_push/detail/detail",
+	scene:"",
+	check_path:false,
+	auto_color:true})
+	let path = await base64ToPath(res)
+	console.log(path);
+	uni.previewImage({
+		urls:[path]
 	})
 }
 </script>
