@@ -40,8 +40,11 @@
 <script setup>
 import dayjs from 'dayjs';
 import { showToast } from '../../utils/utils';
+import { base64ToPath } from 'image-tools'
 const emits=defineEmits(['success'])
 const db=uniCloud.database()
+const QRCodeObj = uniCloud.importObject("QRCode")
+
 const props=defineProps({
 	writeOff:{
 		type:Boolean,
@@ -83,8 +86,18 @@ const onWriteOff=async()=>{
 		 uni.hideLoading()
 	 }
  }
- const onCode=()=>{
-	 
+ //点击兑换码
+ const onCode=async ()=>{
+	let res = await QRCodeObj.getUnlimited({
+			page: "page_push/play/confirm",
+			scene: props.item._id,
+			check_path: false,
+			auto_color: true
+		})
+		let path = await base64ToPath(res)
+		uni.previewImage({
+			urls: [path]
+		})
  }
  const clickAwardPic = () => {
  	let urls = [props.item.award_pic.split("?")[0]]
