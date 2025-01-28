@@ -102,7 +102,7 @@ module.exports = {
 			db.collection("push-award-user").add(addArr)
 			updateData.operLogs=dbCmd.push([formData])
 			let find = awardsList.find(find=>find.id==formData.aid)
-			uniPush().sendMessage({
+			await uniPush().sendMessage({
 					user_id:award_user,
 					title:"抽奖结果",
 					content:"恭喜中奖",
@@ -115,7 +115,7 @@ module.exports = {
 						}
 					}
 			})
-			uniPush().sendMessage({
+			await uniPush().sendMessage({
 					user_id:not_award_user,
 					title:"抽奖结果",
 					content:"没有中奖",
@@ -130,7 +130,7 @@ module.exports = {
 			if(reset) payload.reset=true
 			//状态由1-2 点击参与->停止
 			//全员通知抽奖开始
-			uniPush().sendMessage({
+			await uniPush().sendMessage({
 				user_id:userList,
 				title:"大转盘抽奖",
 				content:"大转盘抽奖抽奖中",
@@ -148,7 +148,7 @@ module.exports = {
 		let {data:[{join_count}]}=await db.collection("push-data").where({_id:push_id}).field({join_count:true}).get()
 		let {data} =await db.collection("uni-id-users").where({_id:dbCmd.in(userList),avatar_file:dbCmd.neq(null)}).field({avatar_file:true,nickname:true}).orderBy("register_date","desc").get()
 		let avatars=data.map(item=>item.avatar_file.url)
-		uniPush().sendMessage({
+		await uniPush().sendMessage({
 				user_id:userList,
 				title:"实时参与人数统计",
 				content:"获取参与当前投票的人员信息",
