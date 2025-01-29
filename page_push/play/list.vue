@@ -22,12 +22,14 @@ const paging=ref(null)
 const dataList=ref([])
 const db=uniCloud.database()
 const queryList=async (pageNo,pageSize)=>{
+	console.log(123);
 	let skip = (pageNo-1)*pageSize
-	let {result:{data:[{awardsList,operLogs,award_user_id}={}]=[],errCode=400}={}}=await await db.collection("push-data").doc(pushId).field(`awardsList,operLogs`).get()
-	if(errCode!=0) return paging.value.complete(false)
-	if(award_user_id!=uniCloud.getCurrentUserInfo().uid){
-		return paging.value.complete(false)
+	let {result:{data:[{awardsList,operLogs,user_id}={}]=[],errCode=400}={}}=await db.collection("push-data").doc(pushId).field(`awardsList,operLogs,user_id`).get()
+	if(errCode!=0) return paging.value.complete([])
+	if(user_id!=uniCloud.getCurrentUserInfo().uid){
+		return paging.value.complete([])
 	}
+	
 	let awardTmp=await db.collection("push-award-user").where({
 		push_id:pushId,
 		order_id:orderID
@@ -35,7 +37,7 @@ const queryList=async (pageNo,pageSize)=>{
 	let userTmp=await db.collection("uni-id-users").field(
 		`_id,avatar_file,nickname`
 	).getTemp()
-	let {result:{data,errCode:errCode2}={}} = await db.collection(awardTmp,userTmp).field("_id,push_id,award_id,order_id,status,create_date,arrayElemAt(award_user_id,0) as award_userInfo").get()
+	let {result:{data,errCode:errCode2}} = await db.collection(awardTmp,userTmp).field("_id,push_id,award_id,order_id,status,create_date,arrayElemAt(award_user_id,0) as award_userInfo").get()
 	data=data.map(item=>{
 		let find =awardsList.find(i=>i.id=item.award_id)
 		let orderIndex = operLogs.findIndex(oIndex=>oIndex.id=item.order_id)

@@ -26,7 +26,7 @@ onLoad((e)=>{
 const queryList=async (pageNo,pageSize)=>{
 	let skip = (pageNo-1)*pageSize
 	let {result:{data:[{awardsList,operLogs}={}]=[],errCode=400}={}}=await db.collection("push-data").doc(pushId).field(`awardsList,operLogs`).get()
-	if(errCode!=0) return paging.value.complete(false)
+	if(errCode!=0) return paging.value.complete([])
 	let awardTmp=await db.collection("push-award-user").where({
 		push_id:pushId,
 		award_user_id:uniCloud.getCurrentUserInfo().uid

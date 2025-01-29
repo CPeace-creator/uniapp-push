@@ -1,7 +1,7 @@
 <template>
 	<view class="awardsItem">
 		<view class="userInfo">
-			<image  class="pic" :src="item.award_userInfo?item.award_userInfo.avatar_file.url:'../../static/logo.jpg'" mode="aspectFill"></image>
+			<image  class="pic" :src="item.award_userInfo.avatar_file?.url?item.award_userInfo.avatar_file.url:'../../static/logo.jpg'" mode="aspectFill"></image>
 			<view class="text">
 				{{item.award_userInfo.nickname}}
 			</view>	

@@ -39,7 +39,6 @@ const content = ref(null)
 const dataList = ref([])
 const addList = ref([])
 const queryList = async (pageNo, pageSize) => {
-	console.log("123");
 	const pushData = new DBUtils("push-data");
 	let res = await pushData.query({
 		secondTable: "uni-id-users",
